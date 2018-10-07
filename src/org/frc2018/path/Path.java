@@ -13,8 +13,9 @@ public class Path {
     private static final double kSpacing = 6.0; // inches
     private static final double kTolerance = 0.001; 
     private static final double defaultKa = 0.85;
-    private static final double kMaxPathVelocity = 50.0; // ft/s
+    private static final double kMaxPathVelocity = 120.0; // in/s
     private static final double velocityKConstant = 2.0; // 1 - 5
+    private static final double kMaxPathAcceleration = 12.0; // in/s
 
     // waypoint list
     private double[][] data; // [x pos, y pos, distance along path, curvature, max velocity]
@@ -31,13 +32,16 @@ public class Path {
 
         double[] curvature;
         double[] max_velocity;
+        double[] target_velocity;
+        double[] distances;
 
         // inject points
         points = inject(points);
         points = smooth(points, a);
+        distances = calculateDistances(points);
         curvature = calculateCurvature(points);
         max_velocity = calculateMaxVelocity(curvature);
-
+        target_velocity = calculateTargetVelocity(max_velocity, );
 
         return new double[1][1];
     }
@@ -96,11 +100,21 @@ public class Path {
         return newPath;
     }
 
+    private static double[] calculateDistances(List<Point2D> points) {
+        double[] result = new double[points.size() - 1];
+
+        result[0] = 0;
+        for(int i = 0; i < points.size(); i++) {
+            
+        }
+
+        return result;
+    }
+
     private static double[] calculateCurvature(List<Point2D> points) {
         double[] result = new double[points.size()];
 
         for(int i = 1; i < points.size() - 1; i++) {
-            // Point2D Q = path.get(i - 1);
             double x1 = points.get(i)    .x;
             double y1 = points.get(i)    .y;
             double x2 = points.get(i - 1).x;
@@ -127,10 +141,22 @@ public class Path {
         return result;
     }
 
+    private static double[] calculateTargetVelocity(double[] max_velocity, double[] distances) {
+        double[] result = new double[max_velocity.length];
+        result[result.length] = 0;
+        for (int i = 0; i < max_velocity.length - 1; i++) {
+            double distance = distances[i + 1] - distances[i];
+            double value = Math.sqrt(Math.pow(max_velocity[i], 2) + 2.0 * kMaxPathAcceleration * distance);
+            result[i] = Math.min(max_velocity[i], value);
+        }
+        return result;
+    }
+
     private static double distance_formula(Point2D a, Point2D b) {
         Vector2 v = new Vector2(a.x - b.x, a.y - b.y);
         return v.getMagnitude();
     }
+
 
 
 }

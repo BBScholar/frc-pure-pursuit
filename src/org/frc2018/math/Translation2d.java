@@ -1,13 +1,14 @@
 package org.frc2018.math;
 
+import org.frc2018.math.Interpolable;
+
 
 import java.text.DecimalFormat;
 
 /**
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
- * can be used as a point or as a vector
  */
-public class Translation2d {
+public class Translation2d implements Interpolable<Translation2d> {
     protected static final Translation2d kIdentity = new Translation2d();
 
     public static final Translation2d identity() {
@@ -42,11 +43,11 @@ public class Translation2d {
      * 
      * @return sqrt(x^2 + y^2)
      */
-    public double mag() {
+    public double norm() {
         return Math.hypot(x_, y_);
     }
 
-    public double mag2() {
+    public double norm2() {
         return x_ * x_ + y_ * y_;
     }
 
@@ -64,10 +65,6 @@ public class Translation2d {
 
     public void setY(double y) {
         y_ = y;
-    }
-
-    public Translation2d normalize() {
-        return new Translation2d(x_ / mag(), y_ / mag());
     }
 
     /**
@@ -105,6 +102,16 @@ public class Translation2d {
         return new Translation2d(-x_, -y_);
     }
 
+    @Override
+    public Translation2d interpolate(Translation2d other, double x) {
+        if (x <= 0) {
+            return new Translation2d(this);
+        } else if (x >= 1) {
+            return new Translation2d(other);
+        }
+        return extrapolate(other, x);
+    }
+
     public Translation2d extrapolate(Translation2d other, double x) {
         return new Translation2d(x * (other.x_ - x_) + x_, x * (other.y_ - y_) + y_);
     }
@@ -124,7 +131,7 @@ public class Translation2d {
     }
 
     public static Rotation2d getAngle(Translation2d a, Translation2d b) {
-        double cos_angle = dot(a, b) / (a.mag() * b.mag());
+        double cos_angle = dot(a, b) / (a.norm() * b.norm());
         if (Double.isNaN(cos_angle)) {
             return new Rotation2d();
         }

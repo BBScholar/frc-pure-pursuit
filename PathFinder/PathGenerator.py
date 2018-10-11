@@ -2,6 +2,8 @@ import cv2
 import configparser
 import math
 import sys
+import argparse
+import json
 
 # HANDLE MOUSE EVENTS FOR SELECTION
 def click(event, x, y, flags, param):
@@ -121,6 +123,7 @@ for i, w in enumerate(smooth_waypoints[1:], start=1):
 
 # WRITE RESULTS TO FILE
 with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
+    file.write("x,y,target_velocity\n")
     for w in smooth_waypoints:
         file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
 

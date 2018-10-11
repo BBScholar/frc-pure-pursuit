@@ -8,6 +8,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.frc2018.Constants;
+import org.frc2018.math.Kinematics;
+import org.frc2018.math.RigidTransform2d;
+import org.frc2018.math.Twist2d;
+import org.frc2018.path.Lookahead;
+import org.frc2018.path.Path;
+import org.frc2018.path.PathFollower;
 
 public class Drive implements Subsystem {
 
@@ -71,9 +77,15 @@ public class Drive implements Subsystem {
     private PigeonIMU m_gyro;
 
     private DriveMode m_mode;
+    private Path m_currentPath;
 
     private final int POSITION_CONTROL_SLOT = 0;
     private final int VELOCITY_CONTROL_SLOT = 1;
+
+    // controllers
+    private PathFollower mPathFollower = null;
+    private RobotState mRobotState = RobotState.getInstance();
+
 
     private boolean mIsBrakeMode = false;
     private boolean mIsOnTarget = false;
@@ -114,7 +126,7 @@ public class Drive implements Subsystem {
     }
 
     @Override
-    public void update() {
+    public void update(float timestamp) {
         
         switch(m_mode) {
             case OPEN_LOOP:
@@ -123,6 +135,7 @@ public class Drive implements Subsystem {
                 return;
             case FOLLOW_PATH:
                 // something here later
+                updatePathFollower(timestamp);
                 return;
             case TURN_TO_HEADING:
                 // something here
@@ -268,6 +281,61 @@ public class Drive implements Subsystem {
         }
     }
 
+    private void updatePathFollower(double timestamp) {
+        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+        Twist2d command = mPathFollower.update(timestamp, robot_pose,
+                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
+        if (!mPathFollower.isFinished()) {
+            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+            updateVelocitySetpoint(setpoint.left, setpoint.right);
+        } else {
+            updateVelocitySetpoint(0, 0);
+        }
+    }
+
+    public synchronized void setWantDrivePath(Path path, boolean reversed) {
+        if (m_currentPath != path || m_mode != DriveMode.FOLLOW_PATH) {
+            configureTalonsForSpeedControl();
+            RobotState.getInstance().resetDistanceDriven();
+            mPathFollower = new PathFollower(path, reversed,
+                    new PathFollower.Parameters(
+                            new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,
+                                    Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed),
+                            Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
+                            Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
+                            Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
+                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
+                            Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance,
+                            Constants.kPathStopSteeringDistance));
+            m_mode = DriveMode.FOLLOW_PATH;
+            m_currentPath = path;
+        } else {
+            setVelocitySetpoint(0, 0);
+        }
+    }
+
+    public synchronized boolean isDoneWithPath() {
+        if (m_mode == DriveMode.FOLLOW_PATH && mPathFollower != null) {
+            return mPathFollower.isFinished();
+        } else {
+            System.out.println("Robot is not in path following mode");
+            return true;
+        }
+    }
+
+    public synchronized void forceDoneWithPath() {
+        if (m_mode == DriveMode.FOLLOW_PATH && mPathFollower != null) {
+            mPathFollower.forceFinish();
+        } else {
+            System.out.println("Robot is not in path following mode");
+        }
+    }
+
+    public boolean isApproaching() {
+        return mIsApproaching;
+    }
+
+
     // encoder stuff
 
     /**
@@ -410,6 +478,10 @@ public class Drive implements Subsystem {
      */
     public double getGyroAngle() {
         return m_gyro.getAbsoluteCompassHeading();
+    }
+
+    public double getGyroAngleRadians() {
+        return Math.toRadians(getGyroAngle());
     }
 
     /**

@@ -1,5 +1,9 @@
 package org.frc2018.math;
 
+import static org.frc2018.math.Util.epsilonEquals;
+
+import org.frc2018.math.Interpolable;
+
 import java.text.DecimalFormat;
 
 /**
@@ -7,7 +11,7 @@ import java.text.DecimalFormat;
  * 
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
-public class Rotation2d{
+public class Rotation2d implements Interpolable<Rotation2d> {
     protected static final Rotation2d kIdentity = new Rotation2d();
 
     public static final Rotation2d identity() {
@@ -115,10 +119,24 @@ public class Rotation2d{
         return new Rotation2d(cos_angle_, -sin_angle_, false);
     }
 
+    public boolean isParallel(Rotation2d other) {
+        return epsilonEquals(Translation2d.cross(toTranslation(), other.toTranslation()), 0.0, kEpsilon);
+    }
+
     public Translation2d toTranslation() {
         return new Translation2d(cos_angle_, sin_angle_);
     }
 
+    @Override
+    public Rotation2d interpolate(Rotation2d other, double x) {
+        if (x <= 0) {
+            return new Rotation2d(this);
+        } else if (x >= 1) {
+            return new Rotation2d(other);
+        }
+        double angle_diff = inverse().rotateBy(other).getRadians();
+        return this.rotateBy(Rotation2d.fromRadians(angle_diff * x));
+    }
 
     @Override
     public String toString() {

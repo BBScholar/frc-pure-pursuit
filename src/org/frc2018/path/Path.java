@@ -1,134 +1,215 @@
 package org.frc2018.path;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import org.frc2018.Constants;
+import org.frc2018.path.motion.MotionState;
 
 import org.frc2018.math.Translation2d;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+/**
+ * Class representing the robot's autonomous path.
+ * 
+ * Field Coordinate System: Uses a right hand coordinate system. Positive x is right, positive y is up, and the origin
+ * is at the bottom left corner of the field. For angles, 0 degrees is facing right (1, 0) and angles increase as you
+ * turn counter clockwise.
+ */
+
 public class Path {
+    List<PathSegment> segments;
+    PathSegment prevSegment;
+    HashSet<String> mMarkersCrossed = new HashSet<String>();
 
-    // constants
-    private static final double kSpacing = 6.0; // inches
-    private static final double kTolerance = 0.001; 
-    private static final double defaultKa = 0.85;
-    private static final double kMaxPathVelocity = 120.0; // in/s
-    private static final double velocityKConstant = 2.0; // 1 - 5
-    private static final double kMaxPathAcceleration = 12.0; // in/s
-
-    // waypoint list
-    private double[][] path;  // x y coords
-    private double[][] smooth_path; // smoothed x y coords
-    private double[] distances; // distance along path at each point
-    private double[] curvature;  // cruvature at each point
-    private double[] max_velocity; // max velocity at each point
-    private double[] target_velocity; // target velocity at each point
-
-    public Path(List<Translation2d> points, double a) {
-        this.path = injectPoints(translationListToArray(points));
-        this.smooth_path = smoothPath(this.path, a, 1 - a, 0.001);
-        this.distances = distanceAlongPath(smooth_path);
-        this.curvature = curvatureAtPoints(smooth_path);
-        
+    public void extrapolateLast() {
+        PathSegment last = segments.get(segments.size() - 1);
+        last.extrapolateLookahead(true);
     }
 
-    public Path(List<Translation2d> points) {
-        this(points, defaultKa);
+    public org.frc2018.math.Translation2d getEndPosition() {
+        return segments.get(segments.size() - 1).getEnd();
     }
 
+    public Path() {
+        segments = new ArrayList<PathSegment>();
+    }
 
-    private static double[][] injectPoints(double[][] path) {
-        List<Translation2d> newPoints = new ArrayList<>();
-        for(int i = 0; i < path.length - 1; i++) {
-            Translation2d start = new Translation2d(path[i][0], path[i][1]);
-            Translation2d end = new Translation2d(path[i+1][0], path[i+1][1]);
-            Translation2d v = new Translation2d(start, end);
-            int points_that_fit = (int) Math.ceil(v.mag() / kSpacing);
-            v = v.normalize().scale(kSpacing);
-            for (int j = 0; j < points_that_fit; j++) {
-                newPoints.add(new Translation2d( start.x() + v.x() * i, start.y() + v.y() * i));
-            }
+    /**
+     * add a segment to the Path
+     * 
+     * @param segment
+     *            the segment to add
+     */
+    public void addSegment(PathSegment segment) {
+        segments.add(segment);
+    }
+
+    /**
+     * @return the last MotionState in the path
+     */
+    public MotionState getLastMotionState() {
+        if (segments.size() > 0) {
+            MotionState endState = segments.get(segments.size() - 1).getEndState();
+            return new MotionState(0.0, 0.0, endState.vel(), endState.acc());
+        } else {
+            return new MotionState(0, 0, 0, 0);
         }
-        newPoints.add(new Translation2d(path[path.length][0], path[path.length][1]));
-        return translationListToArray(newPoints);
     }
 
-    private static double[][] smoothPath(double[][] path, double a, double b, double tolerance){
-        //copy array
-        double[][] newPath = doubleArrayCopy(path);
-        double change = tolerance;
-        while(change >= tolerance){
-            change = 0.0;
-            for(int i = 1; i<path.length-1; i++)
-                for(int j = 0; j<path[i].length; j++){
-                    double aux = newPath[i][j];
-                    newPath[i][j] += a * (path[i][j] - newPath[i][j]) + b *(newPath[i-1][j] + newPath[i+1][j] - (2.0 * newPath[i][j]));change += Math.abs(aux - newPath[i][j]);
+    /**
+     * get the remaining distance left for the robot to travel on the current segment
+     * 
+     * @param robotPos
+     *            robot position
+     * @return remaining distance on current segment
+     */
+    public double getSegmentRemainingDist(Translation2d robotPos) {
+        PathSegment currentSegment = segments.get(0);
+        return currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
+    }
+
+    /**
+     * @return the length of the current segment
+     */
+    public double getSegmentLength() {
+        PathSegment currentSegment = segments.get(0);
+        return currentSegment.getLength();
+    }
+
+    public static class TargetPointReport {
+        public Translation2d closest_point;
+        public double closest_point_distance;
+        public double closest_point_speed;
+        public Translation2d lookahead_point;
+        public double max_speed;
+        public double lookahead_point_speed;
+        public double remaining_segment_distance;
+        public double remaining_path_distance;
+
+        public TargetPointReport() {
+        }
+    }
+
+    /**
+     * Gives the position of the lookahead point (and removes any segments prior to this point).
+     * 
+     * @param robot
+     *            Translation of the current robot pose.
+     * @return report containing everything we might want to know about the target point.
+     */
+    public TargetPointReport getTargetPoint(Translation2d robot, Lookahead lookahead) {
+        TargetPointReport rv = new TargetPointReport();
+        PathSegment currentSegment = segments.get(0);
+        rv.closest_point = currentSegment.getClosestPoint(robot);
+        rv.closest_point_distance = new Translation2d(robot, rv.closest_point).norm();
+        /*
+         * if (segments.size() > 1) { // Check next segment to see if it is closer. final Translation2d
+         * next_segment_closest_point = segments.get(1).getClosestPoint(robot); final double
+         * next_segment_closest_point_distance = new Translation2d(robot, next_segment_closest_point) .norm(); if
+         * (next_segment_closest_point_distance < rv.closest_point_distance) { rv.closest_point =
+         * next_segment_closest_point; rv.closest_point_distance = next_segment_closest_point_distance;
+         * removeCurrentSegment(); currentSegment = segments.get(0); } }
+         */
+        rv.remaining_segment_distance = currentSegment.getRemainingDistance(rv.closest_point);
+        rv.remaining_path_distance = rv.remaining_segment_distance;
+        for (int i = 1; i < segments.size(); ++i) {
+            rv.remaining_path_distance += segments.get(i).getLength();
+        }
+        rv.closest_point_speed = currentSegment
+                .getSpeedByDistance(currentSegment.getLength() - rv.remaining_segment_distance);
+        double lookahead_distance = lookahead.getLookaheadForSpeed(rv.closest_point_speed) + rv.closest_point_distance;
+        if (rv.remaining_segment_distance < lookahead_distance && segments.size() > 1) {
+            lookahead_distance -= rv.remaining_segment_distance;
+            for (int i = 1; i < segments.size(); ++i) {
+                currentSegment = segments.get(i);
+                final double length = currentSegment.getLength();
+                if (length < lookahead_distance && i < segments.size() - 1) {
+                    lookahead_distance -= length;
+                } else {
+                    break;
                 }
             }
-        return newPath;
-    }
-
-    private static double[] distanceAlongPath(double[][] path) {
-        double[] result = new double[path.length];
-        result[0] = 0;
-        for (int i = 1; i < path.length; i++) {
-            Translation2d start = new Translation2d(path[i - 1][0], path[i - 1][1]);
-            Translation2d end = new Translation2d(path[i][0], path[i][1]);
-            Translation2d v = new Translation2d(start, end);
-            result[i] = result[i - 1] + v.mag();
+        } else {
+            lookahead_distance += (currentSegment.getLength() - rv.remaining_segment_distance);
         }
-
-        return result;
+        rv.max_speed = currentSegment.getMaxSpeed();
+        rv.lookahead_point = currentSegment.getPointByDistance(lookahead_distance);
+        rv.lookahead_point_speed = currentSegment.getSpeedByDistance(lookahead_distance);
+        checkSegmentDone(rv.closest_point);
+        return rv;
     }
 
-    private static double[] curvatureAtPoints(double[][] path) {
-        double[] result = new double[path.length];
-        for(int i = 1; i < path.length - 1; i++) {
-            // point we're trying to get curavture for (x1, y1)
-            Translation2d P = new Translation2d(path[i][0], path[i][1]);
-            // point behind (x2, y2)
-            Translation2d Q = new Translation2d(path[i - 1][0], path[i - 1][1]);
-            // point infront (x3, y3)
-            Translation2d R = new Translation2d(path[i + 1][0], path[i + 1][1]);
-            
-            if(P.x() == Q.x()) {
-                P.setX(P.x() + 1E-10);
+    /**
+     * Gives the speed the robot should be traveling at the given position
+     * 
+     * @param robotPos
+     *            position of the robot
+     * @return speed robot should be traveling
+     */
+    public double getSpeed(Translation2d robotPos) {
+        PathSegment currentSegment = segments.get(0);
+        return currentSegment.getSpeedByClosestPoint(robotPos);
+    }
+
+    /**
+     * Checks if the robot has finished traveling along the current segment then removes it from the path if it has
+     * 
+     * @param robotPos
+     *            robot position
+     */
+    public void checkSegmentDone(Translation2d robotPos) {
+        PathSegment currentSegment = segments.get(0);
+        double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
+        if (remainingDist < Constants.kSegmentCompletionTolerance) {
+            removeCurrentSegment();
+        }
+    }
+
+    public void removeCurrentSegment() {
+        prevSegment = segments.remove(0);
+        String marker = prevSegment.getMarker();
+        if (marker != null)
+            mMarkersCrossed.add(marker);
+    }
+
+    /**
+     * Ensures that all speeds in the path are attainable and robot can slow down in time
+     */
+    public void verifySpeeds() {
+        double maxStartSpeed = 0.0;
+        double[] startSpeeds = new double[segments.size() + 1];
+        startSpeeds[segments.size()] = 0.0;
+        for (int i = segments.size() - 1; i >= 0; i--) {
+            PathSegment segment = segments.get(i);
+            maxStartSpeed += Math
+                    .sqrt(maxStartSpeed * maxStartSpeed + 2 * Constants.kPathFollowingMaxAccel * segment.getLength());
+            startSpeeds[i] = segment.getStartState().vel();
+            // System.out.println(maxStartSpeed + ", " + startSpeeds[i]);
+            if (startSpeeds[i] > maxStartSpeed) {
+                startSpeeds[i] = maxStartSpeed;
+                // System.out.println("Segment starting speed is too high!");
             }
-
-            double k1 = 0.5 * (Math.pow(P.x(), 2) + Math.pow(P.y(), 2) - Math.pow(Q.x(), 2) - Math.pow(Q.y(), 2)) / (P.x() - Q.x());
-            double k2 = (P.y() - Q.y()) / (P.x() - Q.x());
-            double b = 0.5 * (Math.pow(P.x(),2) - 2.0 * Q.x() * k1 + Math.pow(Q.y(), 2) - Math.pow(R.x(), 2) + 2.0 * R.x() * k1 - Math.pow(R.y(), 2)) 
-                / (R.x() * k2 - R.y() + Q.y() - Q.x() * k2);
-            double a = k1 - k2 * b;
-            double r = Math.hypot((P.x() - a), (P.y() - b));
-            result[i] = 1.0 / r;
+            maxStartSpeed = startSpeeds[i];
         }
-        return result;
+        for (int i = 0; i < segments.size(); i++) {
+            PathSegment segment = segments.get(i);
+            double endSpeed = startSpeeds[i + 1];
+            MotionState startState = (i > 0) ? segments.get(i - 1).getEndState() : new MotionState(0, 0, 0, 0);
+            startState = new MotionState(0, 0, startState.vel(), startState.vel());
+            segment.createMotionProfiler(startState, endSpeed);
+        }
     }
 
-    private static double[][] doubleArrayCopy(double[][] array) {
-        double[][] result = new double[array.length][array[0].length];
-
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[0].length; j++) {
-                result[i][j] = array[i][j];
-            }
-        }
-
-        return result;
+    public boolean hasPassedMarker(String marker) {
+        return mMarkersCrossed.contains(marker);
     }
 
-
-
-    private static double[][] translationListToArray(List<Translation2d> points) {
-        double[][] result = new double[points.size()][2];
-        int i = 0;
-        for(Translation2d p : points) {
-            result[i][0] = p.x();
-            result[i][1] = p.y();
+    public String toString() {
+        String str = "";
+        for (PathSegment s : segments) {
+            str += s.toString() + "\n";
         }
-        return result;
+        return str;
     }
-
-
 }

@@ -10,7 +10,7 @@ public class Constants {
 
     public static final int GYRO_PORT = 5;
 
-    public static final double MAX_SETPOINT = 100.0; // inches per second
+    public static final double MAX_SETPOINT = 12.0 * 10.0; // 12 ft per second
 
     public static final double WHEEL_DIAMETER = 6.0;
     public static final int ENCODERS_TICKS_PER_ROTATION = 1028;
@@ -37,7 +37,7 @@ public class Constants {
 
      // Wheels
      public static double kDriveWheelDiameterInches = 3.419;
-     public static double kTrackWidthInches = 26.655;
+     public static double kTrackWidthInches = 22.0;
      public static double kTrackScrubFactor = 0.924;
 
      public static double kMinLookAhead = 12.0; // inches
@@ -51,8 +51,8 @@ public class Constants {
                                                       // our speed
                                                       // in inches per sec
      public static double kSegmentCompletionTolerance = 0.1; // inches
-     public static double kPathFollowingMaxAccel = 120.0; // inches per second^2
-     public static double kPathFollowingMaxVel = 120.0; // inches per second
+     public static double kPathFollowingMaxAccel = 120.0;    // inches per second^2
+     public static double kPathFollowingMaxVel = 120.0;      // inches per second
      public static double kPathFollowingProfileKp = 5.00;
      public static double kPathFollowingProfileKi = 0.03;
      public static double kPathFollowingProfileKv = 0.02;

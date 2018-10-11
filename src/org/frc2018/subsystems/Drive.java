@@ -126,7 +126,7 @@ public class Drive implements Subsystem {
     }
 
     @Override
-    public void update(float timestamp) {
+    public void update(double timestamp) {
         
         switch(m_mode) {
             case OPEN_LOOP:

@@ -5,7 +5,7 @@ public interface Subsystem {
     /**
      * used to call nessesary functions every robot tick
      */
-    public void update(float timestamp);
+    public void update(double timestamp);
 
     /**
      * outputs and recieves data from smart dashboard

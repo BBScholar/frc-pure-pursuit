@@ -72,9 +72,6 @@ public class Drive implements Subsystem {
 
     private DriveMode m_mode;
 
-    private final int POSITION_CONTROL_SLOT = 0;
-    private final int VELOCITY_CONTROL_SLOT = 1;
-
     private boolean mIsBrakeMode = false;
     private boolean mIsOnTarget = false;
     private boolean mIsApproaching = false;
@@ -109,7 +106,7 @@ public class Drive implements Subsystem {
         mIsBrakeMode = true;
         setBrakeMode(false);
 
-        reloadGains();
+        loadPositionGains();
         setOpenLoop(0, 0);
     }
 
@@ -205,8 +202,7 @@ public class Drive implements Subsystem {
     private void configureTalonsForSpeedControl() {
         if(!usesVelocityControl(m_mode)) {
             setBrakeMode(true);
-            m_left_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
-            m_right_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
+            loadPositionGains();
         }
     }
 
@@ -237,6 +233,7 @@ public class Drive implements Subsystem {
      * @param right_inches
      */
     public void setPositionSetpoint(double left_inches, double right_inches) {
+        m_mode = DriveMode.DRIVE_STRAIGHT;
         configureTalonsForPositionControl();
         updatePositionSetpoint(left_inches, right_inches);
     }
@@ -247,8 +244,7 @@ public class Drive implements Subsystem {
     private void configureTalonsForPositionControl() {
         if(!usesPositionControl(m_mode)) {
             setBrakeMode(true);
-            m_left_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
-            m_right_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
+            loadVelocityGains();
         }
     }
 
@@ -442,48 +438,44 @@ public class Drive implements Subsystem {
 
     // pid stuff
 
+    
+
     /**
      * 
      */
-    public void reloadGains() {
+    public void loadPositionGains() {
         // left position gains
-        m_left_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
         m_left_master.config_kP(0, Constants.POS_kP, 0);
         m_left_master.config_kI(0, Constants.POS_kI, 0);
         m_left_master.config_kD(0, Constants.POS_kD, 0);
         m_left_master.config_kF(0, Constants.POS_kF, 0);
-        m_left_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
         m_left_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
         m_left_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
         m_left_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
 
         // right position gains
-        m_right_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
         m_right_master.config_kP(0, Constants.POS_kP, 0);
-        m_right_master.config_kP(0, Constants.POS_kI, 0);
-        m_right_master.config_kP(0, Constants.POS_kD, 0);
-        m_right_master.config_kP(0, Constants.POS_kF, 0);
-        m_right_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
+        m_right_master.config_kI(0, Constants.POS_kI, 0);
+        m_right_master.config_kD(0, Constants.POS_kD, 0);
+        m_right_master.config_kF(0, Constants.POS_kF, 0);
         m_right_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
         m_right_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
         m_right_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
 
-        // left velocity gains
-        m_left_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
-        m_left_master.config_kP(0, Constants.VEL_kP, 0);
-        m_left_master.config_kI(0, Constants.VEL_kI, 0);
-        m_left_master.config_kD(0, Constants.VEL_kD, 0);
-        m_left_master.config_kF(0, Constants.VEL_kF, 0);
-        m_left_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
+    }
 
-        // right position gains
-        m_right_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
-        m_right_master.config_kP(0, Constants.VEL_kP, 0);
-        m_right_master.config_kP(0, Constants.VEL_kI, 0);
-        m_right_master.config_kP(0, Constants.VEL_kD, 0);
-        m_right_master.config_kP(0, Constants.VEL_kF, 0);
-        m_right_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
-
+    public void loadVelocityGains() {
+                // left velocity gains
+                m_left_master.config_kP(0, Constants.VEL_kP, 0);
+                m_left_master.config_kI(0, Constants.VEL_kI, 0);
+                m_left_master.config_kD(0, Constants.VEL_kD, 0);
+                m_left_master.config_kF(0, Constants.VEL_kF, 0);
+        
+                // right velocity gains
+                m_right_master.config_kP(0, Constants.VEL_kP, 0);
+                m_right_master.config_kI(0, Constants.VEL_kI, 0);
+                m_right_master.config_kD(0, Constants.VEL_kD, 0);
+                m_right_master.config_kF(0, Constants.VEL_kF, 0);
     }
     
     // abstracted stuff
@@ -500,6 +492,8 @@ public class Drive implements Subsystem {
     public void reset() {
         // m_left_master.setSelectedSensorPosition(0, 0, 0);
         // m_right_master.setSelectedSensorPosition(0, 0, 0);
+        setLeftDistanceInches(0);
+        setRightDistanceInches(0);
         m_gyro.setYaw(0.0, 0);
         m_gyro.setYawToCompass(0);
     }

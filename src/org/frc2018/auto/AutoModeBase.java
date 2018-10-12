@@ -48,7 +48,7 @@ public abstract class AutoModeBase {
     public void runAction(Command action) throws AutoModeEndedException {
         isActiveWithThrow();
         action.start();
-
+        System.out.println("Action started");
         while (isActiveWithThrow() && !action.isFinished()) {
             action.update();
             long waitTime = (long) (m_update_rate * 1000.0);

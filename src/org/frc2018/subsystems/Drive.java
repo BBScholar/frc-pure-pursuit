@@ -8,12 +8,16 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.frc2018.Constants;
+import org.frc2018.loops.Loop;
+import org.frc2018.loops.Looper;
 import org.frc2018.math.Kinematics;
 import org.frc2018.math.RigidTransform2d;
 import org.frc2018.math.Twist2d;
 import org.frc2018.path.Lookahead;
 import org.frc2018.path.Path;
 import org.frc2018.path.PathFollower;
+
+import edu.wpi.first.wpilibj.Timer;
 
 public class Drive implements Subsystem {
 
@@ -114,6 +118,18 @@ public class Drive implements Subsystem {
         m_right_master.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature,
             Constants.TALON_UPDATE_PERIOD_MS, 0);
 
+            /*
+            m_left_master.configNominalOutputForward(0, 0);
+            m_left_master.configNominalOutputReverse(0, 0);
+            m_left_master.configPeakOutputForward(1, 0);
+            m_left_master.configPeakOutputReverse(-1, 0);
+
+            m_right_master.configNominalOutputForward(0, 0);
+            m_right_master.configNominalOutputReverse(0, 0);
+            m_right_master.configPeakOutputForward(1, 0);
+            m_right_master.configPeakOutputReverse(-1, 0);
+            */
+
         m_gyro = new PigeonIMU(Constants.GYRO_PORT);
 
         m_mode = DriveMode.OPEN_LOOP;
@@ -126,25 +142,48 @@ public class Drive implements Subsystem {
     }
 
     @Override
-    public void update(double timestamp) {
-        
-        switch(m_mode) {
-            case OPEN_LOOP:
-                return;
-            case VELOCITY_SETPOINT:
-                return;
-            case FOLLOW_PATH:
-                // something here later
-                updatePathFollower(timestamp);
-                return;
-            case TURN_TO_HEADING:
-                // something here
-                return;
-            case DRIVE_STRAIGHT:
-            
-                return;
-        };
+    public void registerEnabledLoops(Looper enabledLooper) {
+        enabledLooper.register(mLoop);
     }
+
+    private final Loop mLoop = new Loop() {
+        @Override
+        public void onStart(double timestamp) {
+            synchronized (Drive.this) {
+                setOpenLoop(0, 0);
+                setBrakeMode(false);
+                setVelocitySetpoint(0, 0);
+            }
+        }
+
+        @Override
+        public void onLoop(double timestamp) {
+            synchronized (Drive.this) {
+                switch (m_mode) {
+                case OPEN_LOOP:
+                    return;
+                case VELOCITY_SETPOINT:
+                    return;
+                case FOLLOW_PATH:
+                    if (mPathFollower != null) {
+                        updatePathFollower(timestamp);
+                    }
+                    return;
+                case TURN_TO_HEADING:
+                    //updateTurnToHeading(timestamp);
+                    return;
+                default:
+                    System.out.println("Unexpected drive control state: " + m_mode);
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public void onStop(double timestamp) {
+            stop();
+        }
+    };
 
     // Brake Mode stuff
 
@@ -207,6 +246,7 @@ public class Drive implements Subsystem {
      * @param right_inches_per_sec
      */
     public void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+        // System.out.println("Velocity setpoint set");
         configureTalonsForSpeedControl();
         m_mode = DriveMode.VELOCITY_SETPOINT;
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
@@ -218,8 +258,8 @@ public class Drive implements Subsystem {
     private void configureTalonsForSpeedControl() {
         if(!usesVelocityControl(m_mode)) {
             setBrakeMode(true);
-            m_left_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
-            m_right_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
+            m_left_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
+            m_right_master.selectProfileSlot(POSITION_CONTROL_SLOT, 0);
         }
     }
 
@@ -229,17 +269,33 @@ public class Drive implements Subsystem {
      * @param right_inches_per_sec
      */
     private void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+        
+        /*
+        double left = inchesPerSecondToEncoderTicksPer100Ms(left_inches_per_sec);
+        double right = inchesPerSecondToEncoderTicksPer100Ms(right_inches_per_sec);
+        System.out.println(left + " : " + right);
+        m_left_master.set(ControlMode.Velocity, left);
+        m_right_master.set(ControlMode.Velocity, right);
+        */
+        
+        
         if(usesVelocityControl(m_mode)) {
+            // System.out.println("updated velocity setpoint");
             final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
             final double scale = max_desired > Constants.MAX_SETPOINT
                     ? Constants.MAX_SETPOINT / max_desired : 1.0;
-            m_left_master.set(ControlMode.Velocity, scale * inchesPerSecondToEncoderTicksPer100Ms(left_inches_per_sec));
-            m_right_master.set(ControlMode.Velocity, scale * inchesPerSecondToEncoderTicksPer100Ms(right_inches_per_sec));
+
+            double left = scale  * inchesPerSecondToEncoderTicksPer100Ms(left_inches_per_sec);
+            double right = scale * inchesPerSecondToEncoderTicksPer100Ms(right_inches_per_sec);
+            System.out.println("left: " + left + ", right: " + right);
+            m_left_master.set(ControlMode.Velocity, left);
+            m_right_master.set(ControlMode.Velocity, right);
         } else {
             System.out.println("Hit a bad velocity control state");
             m_left_master.set(ControlMode.Velocity, 0);
             m_right_master.set(ControlMode.Velocity, 0);
         }
+
     }
 
     // position control stuff
@@ -281,12 +337,13 @@ public class Drive implements Subsystem {
         }
     }
 
-    private void updatePathFollower(double timestamp) {
+    private synchronized void updatePathFollower(double timestamp) {
         RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
         Twist2d command = mPathFollower.update(timestamp, robot_pose,
                 RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
         if (!mPathFollower.isFinished()) {
             Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+            // System.out.println(setpoint.left + " : " + setpoint.right);
             updateVelocitySetpoint(setpoint.left, setpoint.right);
         } else {
             updateVelocitySetpoint(0, 0);
@@ -524,7 +581,7 @@ public class Drive implements Subsystem {
         m_left_master.config_kI(0, Constants.POS_kI, 0);
         m_left_master.config_kD(0, Constants.POS_kD, 0);
         m_left_master.config_kF(0, Constants.POS_kF, 0);
-        m_left_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
+        // m_left_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
         m_left_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
         m_left_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
         m_left_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
@@ -535,7 +592,7 @@ public class Drive implements Subsystem {
         m_right_master.config_kP(0, Constants.POS_kI, 0);
         m_right_master.config_kP(0, Constants.POS_kD, 0);
         m_right_master.config_kP(0, Constants.POS_kF, 0);
-        m_right_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
+        // m_right_master.config_IntegralZone(POSITION_CONTROL_SLOT, Constants.POS_IZONE, 0);
         m_right_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
         m_right_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
         m_right_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
@@ -546,7 +603,7 @@ public class Drive implements Subsystem {
         m_left_master.config_kI(0, Constants.VEL_kI, 0);
         m_left_master.config_kD(0, Constants.VEL_kD, 0);
         m_left_master.config_kF(0, Constants.VEL_kF, 0);
-        m_left_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
+        // m_left_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
 
         // right position gains
         m_right_master.selectProfileSlot(VELOCITY_CONTROL_SLOT, 0);
@@ -554,7 +611,7 @@ public class Drive implements Subsystem {
         m_right_master.config_kP(0, Constants.VEL_kI, 0);
         m_right_master.config_kP(0, Constants.VEL_kD, 0);
         m_right_master.config_kP(0, Constants.VEL_kF, 0);
-        m_right_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
+        // m_right_master.config_IntegralZone(VELOCITY_CONTROL_SLOT, Constants.VEL_IZONE, 0);
 
     }
     

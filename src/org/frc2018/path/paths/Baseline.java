@@ -15,8 +15,10 @@ public class Baseline implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(16, 160, 0, 0));
+        sWaypoints.add(new Waypoint(16, 160, 0, 60));
+        //sWaypoints.add(new Waypoint(50, 100, 0, 0));
         sWaypoints.add(new Waypoint(86, 160, 0, 60));
+
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

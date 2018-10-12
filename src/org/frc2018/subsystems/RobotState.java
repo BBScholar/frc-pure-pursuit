@@ -1,6 +1,5 @@
 package org.frc2018.subsystems;
 
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.frc2018.Constants;
 import org.frc2018.math.InterpolatingDouble;
 import org.frc2018.math.InterpolatingTreeMap;
 import org.frc2018.math.Kinematics;
@@ -52,13 +50,13 @@ public class RobotState {
 
     private static final int kObservationBufferSize = 100;
 
-
     // FPGATimestamp -> RigidTransform2d or Rotation2d
     private InterpolatingTreeMap<InterpolatingDouble, RigidTransform2d> field_to_vehicle_;
     private Twist2d vehicle_velocity_predicted_;
     private Twist2d vehicle_velocity_measured_;
     private double distance_driven_;
-    
+ 
+
     private RobotState() {
         reset(0, new RigidTransform2d());
     }
@@ -95,6 +93,8 @@ public class RobotState {
                 .transformBy(RigidTransform2d.exp(vehicle_velocity_predicted_.scaled(lookahead_time)));
     }
 
+
+
     public synchronized void addFieldToVehicleObservation(double timestamp, RigidTransform2d observation) {
         field_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
     }
@@ -106,8 +106,6 @@ public class RobotState {
         vehicle_velocity_measured_ = measured_velocity;
         vehicle_velocity_predicted_ = predicted_velocity;
     }
-
-   
 
     public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
             double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
@@ -130,7 +128,5 @@ public class RobotState {
         return vehicle_velocity_measured_;
     }
 
-    public void outputToSmartDashboard() {
 
-    }
 }

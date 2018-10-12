@@ -16,10 +16,10 @@ public class Left_Switch_Cube1 implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(10,150,0,0));
-        sWaypoints.add(new Waypoint(30,150,10,60));
-        sWaypoints.add(new Waypoint(50,200,10,60));
-        sWaypoints.add(new Waypoint(100,200,0,60));
+        sWaypoints.add(new Waypoint(10 ,150,0 ,0));
+        sWaypoints.add(new Waypoint(50 ,150,15,60));
+        sWaypoints.add(new Waypoint(70 ,200,15,60));
+        sWaypoints.add(new Waypoint(100,200,0 ,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }

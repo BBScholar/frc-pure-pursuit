@@ -3,14 +3,16 @@ package org.frc2018;
 public class Constants {
 
 
-    public static final int LEFT_MASTER_PORT = 1;
-    public static final int LEFT_SLAVE_PORT = 2;
-    public static final int RIGHT_MASTER_PORT = 3;
-    public static final int RIGHT_SLAVE_PORT = 4;
+    public static final int LEFT_MASTER_PORT = 2;
+    public static final int LEFT_SLAVE_PORT = 1;
+    public static final int RIGHT_MASTER_PORT = 8;
+    public static final int RIGHT_SLAVE_PORT = 9;
 
-    public static final int GYRO_PORT = 5;
+    public static final int ARM_PORT = 5;
 
-    public static final double MAX_SETPOINT = 12.0 * 10.0; // 12 ft per second
+    public static final int GYRO_PORT = 10;
+
+    public static final double MAX_SETPOINT = 5 * 10.0; // 12 ft per second
 
     public static final double WHEEL_DIAMETER = 6.0;
     public static final int ENCODERS_TICKS_PER_ROTATION = 1028;
@@ -20,14 +22,14 @@ public class Constants {
     // pid constants
     public static final double CLOSED_LOOP_RAMP = 1.0;
 
-    public static final double VEL_kP = 0.2;
-    public static final double VEL_kI = 0.0;
-    public static final double VEL_kD = 0.05;
+    public static final double VEL_kP = 5.0;
+    public static final double VEL_kI = 0.00;
+    public static final double VEL_kD = 0.01;
     public static final double VEL_kF = 0.0;
     public static final int    VEL_IZONE = 10;
 
 
-    public static final double POS_kP = 0.2;
+    public static final double POS_kP = 1.0;
     public static final double POS_kI = 0.0;
     public static final double POS_kD = 0.05;
     public static final double POS_kF = 0.0;
@@ -36,9 +38,8 @@ public class Constants {
     public static final int    POS_MAX_ACCEL = 1000; // encoder ticks per 100ms
 
      // Wheels
-     public static double kDriveWheelDiameterInches = 3.419;
      public static double kTrackWidthInches = 22.0;
-     public static double kTrackScrubFactor = 0.924;
+     public static double kTrackScrubFactor = 0.95;
 
      public static double kMinLookAhead = 12.0; // inches
      public static double kMinLookAheadSpeed = 9.0; // inches per second

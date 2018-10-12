@@ -8,7 +8,9 @@ import org.frc2018.path.paths.*;
 public class TestMode extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException { 
-        runAction(new DrivePathCommand(new Left_Switch_Cube1()));
-        runAction(new DrivePathCommand(new Left_Switch_Grab_Cube()));
+        System.out.println("Routine started");
+        //runAction(new DrivePathCommand(new Left_Switch_Cube1()));
+        //runAction(new DrivePathCommand(new Left_Switch_Grab_Cube()));
+        runAction(new DrivePathCommand(new Baseline()));
     }
 }

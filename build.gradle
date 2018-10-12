@@ -9,7 +9,7 @@ repositories {
 }
 
 def TEAM = 5499
-def ROBOT_CLASS = "org.team5499.robots.frc2018.Robot"
+def ROBOT_CLASS = "org.frc2018.Robot"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.

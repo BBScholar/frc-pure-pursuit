@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.frc2018.Constants;
+import org.frc2018.Position;
 
 public class Drive implements Subsystem {
 
@@ -112,11 +113,17 @@ public class Drive implements Subsystem {
 
     @Override
     public void update() {
-        
+        //System.out.println("Angle: " + getGyroAngle());
+        Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
+        System.out.println(Position.getInstance().toString());
         switch(m_mode) {
             case OPEN_LOOP:
+                // System.out.println("");
+                // System.out.println("kF left = " + m_left_master.getBusVoltage() / m_left_master.getSelectedSensorVelocity(0));
                 return;
             case VELOCITY_SETPOINT:
+                //System.out.println("Left target: " + encoderTicksPer100MsToInchesPerSecond(m_left_master.getClosedLoopTarget(0)) + ", Right target: " + encoderTicksPer100MsToInchesPerSecond(m_right_master.getClosedLoopTarget(0)));
+                //System.out.println("Left error: " + encoderTicksPer100MsToInchesPerSecond(m_left_master.getClosedLoopError(0)) + ", Right error: " + encoderTicksPer100MsToInchesPerSecond(m_right_master.getClosedLoopError(0)));
                 return;
             case FOLLOW_PATH:
                 // something here later
@@ -202,7 +209,7 @@ public class Drive implements Subsystem {
     private void configureTalonsForSpeedControl() {
         if(!usesVelocityControl(m_mode)) {
             setBrakeMode(true);
-            loadPositionGains();
+            loadVelocityGains();
         }
     }
 
@@ -211,7 +218,7 @@ public class Drive implements Subsystem {
      * @param left_inches_per_sec
      * @param right_inches_per_sec
      */
-    private void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+    public void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if(usesVelocityControl(m_mode)) {
             final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
             final double scale = max_desired > Constants.MAX_SETPOINT
@@ -244,7 +251,7 @@ public class Drive implements Subsystem {
     private void configureTalonsForPositionControl() {
         if(!usesPositionControl(m_mode)) {
             setBrakeMode(true);
-            loadVelocityGains();
+            loadPositionGains();
         }
     }
 
@@ -405,7 +412,13 @@ public class Drive implements Subsystem {
      * @return robot heading in degrees
      */
     public double getGyroAngle() {
-        return m_gyro.getAbsoluteCompassHeading();
+        
+        //return m_gyro.getAbsoluteCompassHeading();
+        
+        double[] ypr = new double[3];
+        m_gyro.getYawPitchRoll(ypr);
+        return ypr[0];
+        
     }
 
     /**
@@ -496,6 +509,7 @@ public class Drive implements Subsystem {
         setRightDistanceInches(0);
         m_gyro.setYaw(0.0, 0);
         m_gyro.setYawToCompass(0);
+        Position.getInstance().reset(getLeftDistanceInches(), getRightDistanceInches());
     }
 
     @Override

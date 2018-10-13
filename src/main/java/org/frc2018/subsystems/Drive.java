@@ -113,7 +113,7 @@ public class Drive implements Subsystem {
 
     @Override
     public void update() {
-        //System.out.println("Angle: " + getGyroAngle());
+        System.out.println("Angle: " + getGyroAngle());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
         System.out.println(Position.getInstance().toString());
         switch(m_mode) {
@@ -417,7 +417,10 @@ public class Drive implements Subsystem {
         
         double[] ypr = new double[3];
         m_gyro.getYawPitchRoll(ypr);
-        return ypr[0];
+        double angle = ypr[0];
+        while(angle >= 360) angle -= 360;
+        while(angle < 0) angle += 360;
+        return angle;
         
     }
 

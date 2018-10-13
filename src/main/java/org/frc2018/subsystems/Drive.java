@@ -113,7 +113,7 @@ public class Drive implements Subsystem {
 
     @Override
     public void update() {
-        System.out.println("Angle: " + getGyroAngle());
+        //System.out.println("Angle: " + getGyroAngle());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
         System.out.println(Position.getInstance().toString());
         switch(m_mode) {
@@ -506,13 +506,13 @@ public class Drive implements Subsystem {
 
     @Override
     public void reset() {
-        // m_left_master.setSelectedSensorPosition(0, 0, 0);
-        // m_right_master.setSelectedSensorPosition(0, 0, 0);
+        m_left_master.setSelectedSensorPosition(0, 0, 0);
+        m_right_master.setSelectedSensorPosition(0, 0, 0);
         setLeftDistanceInches(0);
         setRightDistanceInches(0);
         m_gyro.setYaw(0.0, 0);
         m_gyro.setYawToCompass(0);
-        Position.getInstance().reset(getLeftDistanceInches(), getRightDistanceInches());
+        Position.getInstance().reset();
     }
 
     @Override

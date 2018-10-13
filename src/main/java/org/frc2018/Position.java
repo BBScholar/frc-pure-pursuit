@@ -41,11 +41,11 @@ public class Position {
         return new Vector2(x, y);
     }
 
-    public void reset(double left_value, double right_value) {
+    public void reset() {
         x = 0;
         y = 0;
-        last_left = left_value;
-        last_right = right_value; 
+        last_left = 0;
+        last_right = 0; 
     }
 
     @Override

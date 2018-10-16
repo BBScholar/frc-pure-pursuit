@@ -45,8 +45,12 @@ public class Vector2 {
 	 * @param b second vector
 	 * @return returns a - b
 	 */
-	public static Vector2 substract(Vector2 a, Vector2 b) {
+	public static Vector2 subtract(Vector2 a, Vector2 b) {
 		return new Vector2(a.x - b.x, a.y - b.y);
+	}
+
+	public static double dot(Vector2 a, Vector2 b) {
+		return a.x * b.x + a.y * b.y;
 	}
 	
 	/**
@@ -59,9 +63,11 @@ public class Vector2 {
 		y *= coef;
 	}
 
+	/*
 	public double dot(Vector2 other) {
 		return y * other.y + x * other.x;
 	}
+	*/
 	
 	/**
 	 * Gets the magnitude of this vector.

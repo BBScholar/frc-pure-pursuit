@@ -20,12 +20,11 @@ public class PathFollower {
     private Vector2 calculateLookahead(Vector2 robot_pos) {
         Vector2 closest = m_path.getClosestPoint(robot_pos);
         Vector2 next = m_path.getNextPoint(robot_pos);
-        Vector2 d = Vector2.substract(next, closest);
-        Vector2 f = Vector2.substract(closest, robot_pos);
-
-        double a = d.dot(d);
-        double b = 2.0 * f.dot(d);
-        double c = f.dot(f) - Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2);
+        Vector2 d = Vector2.subtract(next, closest);
+        Vector2 f = Vector2.subtract(closest, robot_pos);
+        double a = Vector2.dot(d,d);
+        double b = 2.0 * Vector2.dot(f, d);
+        double c = Vector2.dot(f, f) - Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2);
         double dis = b*b - 4.0 * a * c;
 
         if(dis < 0) {

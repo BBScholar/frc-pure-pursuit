@@ -10,6 +10,7 @@ import org.frc2018.subsystems.Drive;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import jaci.pathfinder.Pathfinder;
 
 public class Robot extends TimedRobot {
 
@@ -48,7 +49,7 @@ public class Robot extends TimedRobot {
         Drive.getInstance().reset();
         /*
         Drive.getInstance().update();
-        //Drive.getInstance().setVelocitySetpoint(-50, -50);
+        Drive.getInstance().setVelocitySetpoint(-50, -50);
         Drive.getInstance().setPositionSetpoint(-48, -48);
         */
         Routine routine = new Routine();

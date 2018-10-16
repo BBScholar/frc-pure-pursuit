@@ -26,5 +26,9 @@ public class AutoRoutineHandler {
         m_routine.getCurrentAction().update();
     }
 
+    public void reset() {
+        m_routine.reset();
+    }
+
 
 }

@@ -79,6 +79,7 @@ public class Drive implements Subsystem {
 
     private PathFollower m_path_follower = null;
     private Path m_path = null;
+    private boolean m_done_with_path = false;
 
     private boolean mIsBrakeMode = false;
     private boolean mIsOnTarget = false;
@@ -288,6 +289,7 @@ public class Drive implements Subsystem {
             configureTalonsForSpeedControl();
             m_mode = DriveMode.FOLLOW_PATH;
         }
+        m_done_with_path = false;
         m_path = path;
         m_path_follower = new PathFollower(m_path);;
     }
@@ -296,11 +298,16 @@ public class Drive implements Subsystem {
         if(m_path_follower.doneWithPath(robot_pos)) {
             m_path_follower = null;
             m_path = null;
+            m_done_with_path = true;
             return;
         }
         robot_angle = Math.toRadians(robot_angle);
         VelocitySetpoint setpoints = m_path_follower.update(robot_pos, robot_angle);
         updateVelocitySetpoint(setpoints.left_velocity, setpoints.right_velocity);
+    }
+
+    public boolean doneWithPath() {
+        return m_done_with_path;
     }
 
     // encoder stuff

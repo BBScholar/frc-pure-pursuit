@@ -314,6 +314,7 @@ public class Drive implements Subsystem {
     
     private void updatePathFollower(Vector2 robot_pos, double robot_angle) {
         if(m_path_follower.doneWithPath(robot_pos)) {
+            updateVelocitySetpoint(0, 0);
             m_path_follower = null;
             m_path = null;
             m_done_with_path = true;

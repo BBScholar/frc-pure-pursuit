@@ -81,6 +81,8 @@ public class Drive implements Subsystem {
     private Path m_path = null;
     private boolean m_done_with_path = false;
 
+    private double m_target_heading;
+
     private boolean mIsBrakeMode = false;
     private boolean mIsOnTarget = false;
     private boolean mIsApproaching = false;
@@ -112,6 +114,8 @@ public class Drive implements Subsystem {
 
         m_mode = DriveMode.OPEN_LOOP;
 
+        m_target_heading = 0;
+
         mIsBrakeMode = true;
         setBrakeMode(false);
 
@@ -136,11 +140,13 @@ public class Drive implements Subsystem {
                 return;
             case FOLLOW_PATH:
                 if(m_path_follower != null) {
+                    System.out.println("Updating path follower!");
                     updatePathFollower(Position.getInstance().getPosition(), getGyroAngle());
                 }
                 return;
             case TURN_TO_HEADING:
                 // something here
+                // updateTurnToHeading();
                 return;
             case DRIVE_STRAIGHT:
             
@@ -280,6 +286,18 @@ public class Drive implements Subsystem {
             m_left_master.set(ControlMode.MotionMagic, 0);
             m_right_master.set(ControlMode.MotionMagic, 0);
         }
+    }
+
+    public void wantTurnToHeading(double angle) {
+
+        if(!usesPositionControl(m_mode)) {
+            configureTalonsForPositionControl();
+            m_mode = DriveMode.TURN_TO_HEADING;
+            updatePositionSetpoint(getLeftDistanceInches(), getRightDistanceInches());
+        }
+        while(angle >= 360) angle -= 360;
+        while(angle < 0) angle += 360;
+        m_target_heading = angle;
     }
 
 
@@ -453,7 +471,6 @@ public class Drive implements Subsystem {
     public double getGyroAngle() {
         
         //return m_gyro.getAbsoluteCompassHeading();
-        
         double[] ypr = new double[3];
         m_gyro.getYawPitchRoll(ypr);
         double angle = ypr[0];

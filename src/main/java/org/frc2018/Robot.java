@@ -10,7 +10,6 @@ import org.frc2018.subsystems.Drive;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import jaci.pathfinder.Pathfinder;
 
 public class Robot extends TimedRobot {
 

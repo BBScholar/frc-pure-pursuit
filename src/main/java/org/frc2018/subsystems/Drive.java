@@ -87,6 +87,8 @@ public class Drive implements Subsystem {
     private boolean mIsOnTarget = false;
     private boolean mIsApproaching = false;
 
+    private int output_counting = 0;
+
     private Drive() {
         m_left_master = new TalonSRX(Constants.LEFT_MASTER_PORT);
         m_left_slave = new TalonSRX(Constants.LEFT_SLAVE_PORT);
@@ -129,7 +131,11 @@ public class Drive implements Subsystem {
         //System.out.printf("Left distance: %.3f, Right distance: %.3f\n", getLeftDistanceInches(), getRightDistanceInches());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
         //System.out.println(Position.getInstance().toString());
-        System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
+        output_counting++;
+        if(output_counting > 35) {
+            System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
+            output_counting = 0;
+        }
         switch(m_mode) {
             case OPEN_LOOP:
                 // System.out.println("");

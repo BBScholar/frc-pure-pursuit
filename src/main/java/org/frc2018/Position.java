@@ -12,13 +12,15 @@ public class Position {
 
     private double x, y;
     private double last_left, last_right;
+    private double last_angle;
 
     private Position() {
         x = 0;
         y = 0;
-
+        
         last_left = 0;
         last_right = 0;
+        last_angle = 0;
     }
 
     public void update(double left_value, double right_value, double angle) {

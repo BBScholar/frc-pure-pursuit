@@ -1,5 +1,7 @@
 package org.frc2018.math;
 
+import java.util.Vector;
+
 public class Vector2 {
 
 	public double x = 0.0, y = 0.0;
@@ -26,6 +28,26 @@ public class Vector2 {
 			y += vector.y;
 		}
 	}
+
+	/**
+	 * 
+	 * @param a
+	 * @param b
+	 * @return a + b
+	 */
+	public static Vector2 add(Vector2 a, Vector2 b) {
+		return new Vector2(a.x + b.x, a.y + b.y);
+	}
+
+	/**
+	 * 
+	 * @param a first vector
+	 * @param b second vector
+	 * @return returns a - b
+	 */
+	public static Vector2 substract(Vector2 a, Vector2 b) {
+		return new Vector2(a.x - b.x, a.y - b.y);
+	}
 	
 	/**
 	 * Multiplies this vector by a scalar.
@@ -35,6 +57,10 @@ public class Vector2 {
 	public void multiply(double coef) {
 		x *= coef;
 		y *= coef;
+	}
+
+	public double dot(Vector2 other) {
+		return y * other.y + x * other.x;
 	}
 	
 	/**

@@ -9,6 +9,10 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import org.frc2018.Constants;
 import org.frc2018.Position;
+import org.frc2018.math.Vector2;
+import org.frc2018.path.Path;
+import org.frc2018.path.PathFollower;
+import org.frc2018.path.PathFollower.VelocitySetpoint;
 
 public class Drive implements Subsystem {
 
@@ -73,6 +77,9 @@ public class Drive implements Subsystem {
 
     private DriveMode m_mode;
 
+    private PathFollower m_path_follower = null;
+    private Path m_path = null;
+
     private boolean mIsBrakeMode = false;
     private boolean mIsOnTarget = false;
     private boolean mIsApproaching = false;
@@ -114,6 +121,7 @@ public class Drive implements Subsystem {
     @Override
     public void update() {
         //System.out.println("Angle: " + getGyroAngle());
+        //System.out.printf("Left distance: %.3f, Right distance: %.3f\n", getLeftDistanceInches(), getRightDistanceInches());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
         System.out.println(Position.getInstance().toString());
         switch(m_mode) {
@@ -126,7 +134,9 @@ public class Drive implements Subsystem {
                 //System.out.println("Left error: " + encoderTicksPer100MsToInchesPerSecond(m_left_master.getClosedLoopError(0)) + ", Right error: " + encoderTicksPer100MsToInchesPerSecond(m_right_master.getClosedLoopError(0)));
                 return;
             case FOLLOW_PATH:
-                // something here later
+                if(m_path_follower != null) {
+                    updatePathFollower(Position.getInstance().getPosition(), getGyroAngle());
+                }
                 return;
             case TURN_TO_HEADING:
                 // something here
@@ -271,6 +281,28 @@ public class Drive implements Subsystem {
         }
     }
 
+
+    // path following stuff
+    public void setWantDrivePath(Path path) {
+        if(!usesVelocityControl(m_mode)) {
+            configureTalonsForSpeedControl();
+            m_mode = DriveMode.FOLLOW_PATH;
+        }
+        m_path = path;
+        m_path_follower = new PathFollower(m_path);;
+    }
+    
+    private void updatePathFollower(Vector2 robot_pos, double robot_angle) {
+        if(m_path_follower.doneWithPath(robot_pos)) {
+            m_path_follower = null;
+            m_path = null;
+            return;
+        }
+        robot_angle = Math.toRadians(robot_angle);
+        VelocitySetpoint setpoints = m_path_follower.update(robot_pos, robot_angle);
+        updateVelocitySetpoint(setpoints.left_velocity, setpoints.right_velocity);
+    }
+
     // encoder stuff
 
     /**
@@ -313,7 +345,7 @@ public class Drive implements Subsystem {
      * 
      * @return
      */
-    public  int getLeftDistanceRaw() {
+    public int getLeftDistanceRaw() {
         return m_left_master.getSelectedSensorPosition(0);
     }
 
@@ -362,7 +394,7 @@ public class Drive implements Subsystem {
      * @return
      */
     public int getRightDistanceRaw() {
-        return -m_right_master.getSelectedSensorPosition(0);
+        return m_right_master.getSelectedSensorPosition(0);
     }
 
     /**
@@ -482,16 +514,16 @@ public class Drive implements Subsystem {
 
     public void loadVelocityGains() {
                 // left velocity gains
-                m_left_master.config_kP(0, Constants.VEL_kP, 0);
-                m_left_master.config_kI(0, Constants.VEL_kI, 0);
-                m_left_master.config_kD(0, Constants.VEL_kD, 0);
-                m_left_master.config_kF(0, Constants.VEL_kF, 0);
+            m_left_master.config_kP(0, Constants.VEL_kP, 0);
+            m_left_master.config_kI(0, Constants.VEL_kI, 0);
+            m_left_master.config_kD(0, Constants.VEL_kD, 0);
+            m_left_master.config_kF(0, Constants.VEL_kF, 0);
         
                 // right velocity gains
-                m_right_master.config_kP(0, Constants.VEL_kP, 0);
-                m_right_master.config_kI(0, Constants.VEL_kI, 0);
-                m_right_master.config_kD(0, Constants.VEL_kD, 0);
-                m_right_master.config_kF(0, Constants.VEL_kF, 0);
+            m_right_master.config_kP(0, Constants.VEL_kP, 0);
+            m_right_master.config_kI(0, Constants.VEL_kI, 0);
+            m_right_master.config_kD(0, Constants.VEL_kD, 0);
+            m_right_master.config_kF(0, Constants.VEL_kF, 0);
     }
     
     // abstracted stuff

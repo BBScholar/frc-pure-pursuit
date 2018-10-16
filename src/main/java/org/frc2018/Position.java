@@ -25,9 +25,10 @@ public class Position {
         angle = Math.toRadians(angle);
         double left_delta = left_value - last_left;
         double right_delta = right_value - last_right;
+        // System.out.println("dL:" + left_delta + " dR: " + right_delta);
         double distance = (left_delta + right_delta) / 2.0;
-        x += distance * Math.cos(angle);
-        y +=  distance * Math.sin(angle);
+        y += distance * Math.cos(angle);
+        x -=  distance * Math.sin(angle);
         last_left = left_value;
         last_right = right_value;
     }
@@ -50,7 +51,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return String.format("Robot Position: X: %.3f, Y:%.3f ", x, y);
+        return String.format("Robot Position: X: %.2f, Y:%.2f ", x, y);
     }
 
 }

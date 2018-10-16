@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        Drive.getInstance().update();
+        
     }
 
     @Override
@@ -40,13 +40,14 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         Drive.getInstance().setBrakeMode(true);
         Drive.getInstance().reset();
+        Drive.getInstance().update();
         //Drive.getInstance().setVelocitySetpoint(-50, -50);
         Drive.getInstance().setPositionSetpoint(-48, -48);
     }
 
     @Override
     public void autonomousPeriodic() {
-        //Drive.getInstance().update();
+        Drive.getInstance().update();
     }
 
     @Override
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         Drive.getInstance().update();
         Drive.getInstance().setOpenLoop(-driver.getY(Hand.kLeft), -driver.getY(Hand.kRight));
+        Drive.getInstance().update();
     }
 
     @Override

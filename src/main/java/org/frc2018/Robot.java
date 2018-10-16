@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         Drive.getInstance().setOpenLoop(0, 0);
-        Drive.getInstance().setBrakeMode(true);
+        // Drive.getInstance().setBrakeMode(true);
         Drive.getInstance().reset();
     }
 

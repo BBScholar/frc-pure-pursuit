@@ -14,7 +14,8 @@ public class PathFollower {
 
     public PathFollower(Path path) {
         m_path = path;
-        last_lookahead = new Vector2(0, 0);
+        last_lookahead = new Vector2(0, 16);
+        //last_lookahead = null;
     }
 
     private Vector2 calculateLookahead(Vector2 robot_pos) {
@@ -47,7 +48,7 @@ public class PathFollower {
                 d.multiply(t2);
                 Vector2 new_look_ahead = Vector2.add(closest, d);
                 last_lookahead = Vector2.copyVector(new_look_ahead);
-                return last_lookahead;
+                return new_look_ahead;
             }
 
             // no intersection
@@ -75,8 +76,9 @@ public class PathFollower {
         Vector2 lookahead = calculateLookahead(robot_pos);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
         VelocitySetpoint set = new VelocitySetpoint();
-        set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2 + curvature * Constants.TRACK_WIDTH) / 2.0;
-        set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2 + curvature * Constants.TRACK_WIDTH) / 2.0;
+        set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        System.out.println(lookahead);
         if(m_path.getBackwards()) {
             set.left_velocity *= -1;
             set.right_velocity *= -1;

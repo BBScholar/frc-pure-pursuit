@@ -128,8 +128,8 @@ public class Drive implements Subsystem {
         //System.out.println("Angle: " + getGyroAngle());
         //System.out.printf("Left distance: %.3f, Right distance: %.3f\n", getLeftDistanceInches(), getRightDistanceInches());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
-        System.out.println(Position.getInstance().toString());
-        //System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
+        //System.out.println(Position.getInstance().toString());
+        // System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
         switch(m_mode) {
             case OPEN_LOOP:
                 // System.out.println("");
@@ -141,8 +141,14 @@ public class Drive implements Subsystem {
                 return;
             case FOLLOW_PATH:
                 if(m_path_follower != null) {
-                    System.out.println("Updating path follower!");
+                    // System.out.println("Updating path follower!");
                     updatePathFollower(Position.getInstance().getPosition(), getGyroAngle());
+                    double leftError = encoderTicksPer100MsToInchesPerSecond(m_left_master.getClosedLoopError(0));
+                    double rightError = encoderTicksPer100MsToInchesPerSecond(m_right_master.getClosedLoopError(0));
+                    double leftSet = encoderTicksPer100MsToInchesPerSecond(m_left_master.getClosedLoopTarget(0));
+                    double rightSet = encoderTicksPer100MsToInchesPerSecond(m_right_master.getClosedLoopTarget(0));
+                    //System.out.println("Velocity target - left: " + leftSet + ", right: " + rightSet);
+                    //System.out.println("Velocity Error - left: " + leftError + ", right: " + rightError);
                 }
                 return;
             case TURN_TO_HEADING:
@@ -306,6 +312,7 @@ public class Drive implements Subsystem {
     public void setWantDrivePath(Path path) {
         if(!usesVelocityControl(m_mode)) {
             configureTalonsForSpeedControl();
+            loadVelocityGains();
             m_mode = DriveMode.FOLLOW_PATH;
         }
         m_done_with_path = false;
@@ -323,6 +330,7 @@ public class Drive implements Subsystem {
         }
         robot_angle = Math.toRadians(robot_angle);
         VelocitySetpoint setpoints = m_path_follower.update(robot_pos, robot_angle);
+        //System.out.println("Vel set -- left: " + setpoints.left_velocity + ", right: " + setpoints.right_velocity);
         updateVelocitySetpoint(setpoints.left_velocity, setpoints.right_velocity);
     }
 
@@ -523,18 +531,18 @@ public class Drive implements Subsystem {
         m_left_master.config_kI(0, Constants.POS_kI, 0);
         m_left_master.config_kD(0, Constants.POS_kD, 0);
         m_left_master.config_kF(0, Constants.POS_kF, 0);
-        m_left_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
-        m_left_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
-        m_left_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
+        //m_left_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
+        //m_left_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
+        //m_left_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
 
         // right position gains
         m_right_master.config_kP(0, Constants.POS_kP, 0);
         m_right_master.config_kI(0, Constants.POS_kI, 0);
         m_right_master.config_kD(0, Constants.POS_kD, 0);
         m_right_master.config_kF(0, Constants.POS_kF, 0);
-        m_right_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
-        m_right_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
-        m_right_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
+        //m_right_master.configClosedloopRamp(Constants.CLOSED_LOOP_RAMP, 0);
+        //m_right_master.configMotionAcceleration(Constants.POS_MAX_ACCEL, 0);
+        //m_right_master.configMotionCruiseVelocity(Constants.POS_MAX_VELO, 0);
 
     }
 

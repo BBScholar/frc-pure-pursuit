@@ -21,10 +21,10 @@ public class Constants {
     // pid constants
     public static final double CLOSED_LOOP_RAMP = 0.0;
 
-    public static final double VEL_kP = 10.0;
+    public static final double VEL_kP = 3.5;
     public static final double VEL_kI = 0.0;
-    public static final double VEL_kD = 0.0;
-    public static final double VEL_kF = 0.0;
+    public static final double VEL_kD = 0.5;
+    public static final double VEL_kF = 0.15;
     public static final int    VEL_IZONE = 10;
 
 

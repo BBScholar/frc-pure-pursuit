@@ -362,7 +362,7 @@ public class Drive implements Subsystem {
      * @return
      */
     public int getRightDistanceRaw() {
-        return -m_right_master.getSelectedSensorPosition(0);
+        return m_right_master.getSelectedSensorPosition(0);
     }
 
     /**

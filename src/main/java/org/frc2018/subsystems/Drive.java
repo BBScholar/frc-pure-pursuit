@@ -133,7 +133,8 @@ public class Drive implements Subsystem {
         //System.out.println(Position.getInstance().toString());
         output_counting++;
         if(output_counting > 35) {
-            System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
+            //System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityRaw())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityRaw()))) / 2);
+            System.out.println(((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / 2) + " : " + getLeftVelocityRaw());
             output_counting = 0;
         }
         switch(m_mode) {

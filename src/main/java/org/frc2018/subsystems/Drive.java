@@ -128,7 +128,8 @@ public class Drive implements Subsystem {
         //System.out.println("Angle: " + getGyroAngle());
         //System.out.printf("Left distance: %.3f, Right distance: %.3f\n", getLeftDistanceInches(), getRightDistanceInches());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
-        System.out.println(Position.getInstance().toString());
+        //System.out.println(Position.getInstance().toString());
+        System.out.println((((m_left_master.getMotorOutputVoltage() + m_left_slave.getMotorOutputVoltage()) / (2 * getLeftVelocityInchesPerSecond())) + ((m_right_master.getMotorOutputVoltage() + m_right_slave.getMotorOutputVoltage()) / (2 * getRightVelocityInchesPerSecond()))) / 2);
         switch(m_mode) {
             case OPEN_LOOP:
                 // System.out.println("");

@@ -16,7 +16,15 @@ public class Path {
 
     private int last_closest_index = 0;
 
+    private boolean backwards;
+
     public Path(String filepath) {
+        this(filepath, false);
+    }
+
+    public Path(String filepath, boolean backwards) {
+        this.backwards = backwards;
+
         List<Vector2> temp_coords = new ArrayList<>();
         List<Double> temp_velo = new ArrayList<>();
         try {
@@ -48,8 +56,19 @@ public class Path {
         return coordinates[findClosestPointIndex(robot_pos)];
     }
 
+    public Vector2 getNextPoint(Vector2 robot_pos) {
+        return coordinates[findClosestPointIndex(robot_pos) + 1];
+    }
+
     public double getClosestPointVelocity(Vector2 robot_pos) {
         return target_velocities[findClosestPointIndex(robot_pos)];
+    }
+
+    public boolean doneWithPath(Vector2 robot_pos) {
+        if(findClosestPointIndex(robot_pos) == coordinates.length - 1) {
+            return true;
+        }
+        return false;
     }
 
     private int findClosestPointIndex(Vector2 robot_pos) {
@@ -65,6 +84,14 @@ public class Path {
             }
         }
         return index;
+    }
+
+    public boolean getBackwards() {
+        return this.backwards;
+    }
+
+    public void setBackwards(boolean backwards) {
+        this.backwards = backwards;
     }
 
 }

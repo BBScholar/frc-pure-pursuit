@@ -15,6 +15,8 @@ public class AutoRoutineHandler {
     }
 
     public void update() {
+        if(m_routine.isFinished()) return;
+
         if(m_routine.getCurrentAction().isFinished()) {
             m_routine.getCurrentAction().done();
             m_routine.advanceRoutine();

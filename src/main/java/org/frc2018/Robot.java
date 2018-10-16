@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
         */
         Routine routine = new Routine();
         routine.addAction(new NothingAction(1));
-        routine.addAction(new DrivePathAction(new Path("")));
+        routine.addAction(new DrivePathAction(new Path("/home/lvuser/paths/path.csv")));
         handler = new AutoRoutineHandler(routine);
         handler.start();
     }

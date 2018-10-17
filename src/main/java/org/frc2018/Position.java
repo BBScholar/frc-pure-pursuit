@@ -2,6 +2,7 @@ package org.frc2018;
 
 import org.frc2018.math.Vector2;
 
+
 public class Position {
 
     private static Position _instance = new Position();

@@ -12,8 +12,8 @@ public class PositionTest {
     public void test_position() {
         Position.getInstance().update(100, 100, 0);
         Vector2 v = Position.getInstance().getPosition();
-        assertEquals(0, v.x, 1);
-        assertEquals(100, v.y, 1);
+        assertEquals(0, v.x, 0.1);
+        assertEquals(100, v.y, 0.1);
     }
 
 

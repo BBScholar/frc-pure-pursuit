@@ -78,7 +78,8 @@ public class PathFollower {
         VelocitySetpoint set = new VelocitySetpoint();
         set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
-        System.out.println(lookahead);
+        // System.out.println(lookahead);
+        System.out.println("Robot position: " + robot_pos + " - Closest point index: " + m_path.findClosestPointIndex(robot_pos));
         if(m_path.getBackwards()) {
             set.left_velocity *= -1;
             set.right_velocity *= -1;

@@ -23,8 +23,11 @@ public class DrivePathAction implements Action {
 
     @Override
     public boolean isFinished() {
-        // System.out.println("Done with path!");
-        return Drive.getInstance().doneWithPath();
+        boolean ret = Drive.getInstance().doneWithPath();
+        if(ret){
+            System.out.println("Done with path!");
+        }
+        return ret;
     }
 
     @Override

@@ -71,7 +71,7 @@ public class Path {
         return false;
     }
 
-    private int findClosestPointIndex(Vector2 robot_pos) {
+    public int findClosestPointIndex(Vector2 robot_pos) {
         int index = last_closest_index;
         Vector2 last_closest = coordinates[index];
         double min_distance = Vector2.distanceBetween(robot_pos, last_closest);
@@ -83,6 +83,7 @@ public class Path {
                 min_distance = temp_distance;
             }
         }
+        last_closest_index = index;
         return index;
     }
 

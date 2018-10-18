@@ -14,7 +14,7 @@ public class PathFollower {
 
     public PathFollower(Path path) {
         m_path = path;
-        last_lookahead = new Vector2(0, 16);
+        last_lookahead = new Vector2(0, 10);
         //last_lookahead = null;
     }
 

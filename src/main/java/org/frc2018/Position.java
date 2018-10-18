@@ -30,7 +30,6 @@ public class Position {
         if(angle_delta == 0) angle_delta = Position.EPSILON;
         double left_delta = left_value - last_left;
         double right_delta = right_value - last_right;
-        // System.out.println("dL:" + left_delta + " dR: " + right_delta);
         double distance = (left_delta + right_delta) / 2.0;
         double radius_of_curvature = distance / angle_delta;
         double delta_y = radius_of_curvature * Math.sin(angle_delta);
@@ -55,7 +54,8 @@ public class Position {
         x = 0;
         y = 0;
         last_left = 0;
-        last_right = 0; 
+        last_right = 0;
+        last_angle = 0;
     }
 
     @Override

@@ -57,6 +57,11 @@ public class Path {
     }
 
     public Vector2 getNextPoint(Vector2 robot_pos) {
+        int closest_index = findClosestPointIndex(robot_pos);
+        if(closest_index == coordinates.length - 1) {
+            // return last point if no more points
+            return coordinates[findClosestPointIndex(robot_pos)];
+        }
         return coordinates[findClosestPointIndex(robot_pos) + 1];
     }
 

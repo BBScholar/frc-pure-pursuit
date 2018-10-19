@@ -76,6 +76,13 @@ public class Path {
         return false;
     }
 
+    public Vector2 getPoint(int index) {
+        if(index >= coordinates.length || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        return coordinates[index];
+    }
+
     public int findClosestPointIndex(Vector2 robot_pos) {
         int index = last_closest_index;
         Vector2 last_closest = coordinates[index];

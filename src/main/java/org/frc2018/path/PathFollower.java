@@ -67,8 +67,8 @@ public class PathFollower {
         double curvature = (2.0 * x) / (Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2));
 
         // calculate side mult
-        double side = Math.signum(Math.sin(robot_angle) * (look_ahead.x - robot_pos.x) - Math.cos(robot_angle) * (look_ahead.y - robot_pos.y));
-        
+        double side = Math.signum(Math.cos(robot_angle) * (look_ahead.x - robot_pos.x) + Math.sin(robot_angle) * (look_ahead.y - robot_pos.y));
+        //System.out.println("Curvature: " + curvature + ", side: " + side);
         // return
         return curvature * side;
     }
@@ -76,6 +76,8 @@ public class PathFollower {
     public VelocitySetpoint update(Vector2 robot_pos, double robot_angle) {
         Vector2 lookahead = calculateLookahead(robot_pos);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
+        //if(curvature > 0.1) curvature = 0.5;
+        //if(curvature < -0.1) curvature = -0.05;
         VelocitySetpoint set = new VelocitySetpoint();
         set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;

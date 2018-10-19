@@ -59,9 +59,10 @@ public class PathFollower {
 
     private double calculateCurvature(Vector2 robot_pos, Vector2 look_ahead, double robot_angle) {
         // calculate curvature
-        double a = -Math.tan(robot_angle);
-        double b = 1;
-        double c = Math.tan(robot_angle) * robot_pos.x - robot_pos.y;
+        double a = -1 / Math.max(Math.tan(robot_angle), Constants.EPSILON);
+        double b = -1;
+        double c = robot_pos.x / Math.max(Math.tan(robot_angle), Constants.EPSILON) + robot_pos.y;
+
         double x = Math.abs(a * look_ahead.x + b * look_ahead.y + c) / (Math.sqrt(a * a + b * b));
         double curvature = (2.0 * x) / (Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2));
 

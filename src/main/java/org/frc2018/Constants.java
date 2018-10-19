@@ -17,6 +17,8 @@ public class Constants {
     public static final double WHEEL_CIR = WHEEL_DIAMETER * Math.PI;
     public static final int TALON_UPDATE_PERIOD_MS = 5;
     public static final double TRACK_WIDTH = 20.0; // inches
+    
+    public static final double EPSILON = 1E-10;
 
     // pid constants
     public static final double CLOSED_LOOP_RAMP = 0.0;

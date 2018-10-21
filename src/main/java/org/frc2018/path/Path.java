@@ -99,6 +99,10 @@ public class Path {
         return index;
     }
 
+    public int getPathLength() {
+        return coordinates.length;
+    }
+
     public boolean getBackwards() {
         return this.backwards;
     }

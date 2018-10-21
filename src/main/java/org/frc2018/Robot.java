@@ -74,8 +74,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         Drive.getInstance().update();
-        double value = -driver.getY(Hand.kLeft);
-        //Drive.getInstance().setOpenLoop(value, value);
         Drive.getInstance().setOpenLoop(-driver.getY(Hand.kLeft), -driver.getY(Hand.kRight));
         Drive.getInstance().update();
     }

@@ -1,5 +1,6 @@
 package org.frc2018.math;
 
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 public class Vector2 {
@@ -98,8 +99,10 @@ public class Vector2 {
 		return rawHeading;
 	}
 	
+	private static DecimalFormat format = new DecimalFormat("####.#");
+
 	public String toString() {
-		return "[" + x + " " + y + "]";
+		return "[" + format.format(x) + ", " + format.format(y) + "]";
 	}
 	
 	/**

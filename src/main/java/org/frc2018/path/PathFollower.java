@@ -40,10 +40,10 @@ public class PathFollower {
 
             Vector2 temp1 = Vector2.multiply(d, t1);
             Vector2 lookahead_1 = Vector2.add(closest, temp1);
-            Vector2 temp2= Vector2.multiply(d, t2);
+            Vector2 temp2 = Vector2.multiply(d, t2);
             Vector2 lookahead_2 = Vector2.add(closest, temp2);
 
-            System.out.print("Lookahead Pos 1: " + lookahead_1 + "Lookahead Pos 2: " + lookahead_2);
+            System.out.print("Robot Pos: " + robot_pos + ", Closest Point: " +  closest + ", Next Closest: " + next +  ", Lookahead Pos 1: " + lookahead_1 + ", Lookahead Pos 2: " + lookahead_2);
 
             if(t1 >= 0 && t1 <= 1) {
                 // return t1 intersection
@@ -52,7 +52,7 @@ public class PathFollower {
                 Vector2 new_look_ahead = Vector2.add(closest, mult);
                 */
                 last_lookahead = Vector2.copyVector(lookahead_1);
-                System.out.println("Chosen lookahead: " + lookahead_1);
+                System.out.println(", Chosen lookahead: " + lookahead_1);
                 return lookahead_1;
             }
             if(t2 >= 0 && t2 <= 1) {
@@ -62,11 +62,11 @@ public class PathFollower {
                 Vector2 new_look_ahead = Vector2.add(closest, mult);
                 */
                 last_lookahead = Vector2.copyVector(lookahead_2);
-                System.out.println("Chosen lookagead: " + lookahead_2);
+                System.out.println("Chosen lookahead: " + lookahead_2);
                 return lookahead_2;
             }
 
-            System.out.println("Chosen lookagead: " + last_lookahead);
+            System.out.println(", Chosen lookahead: " + last_lookahead + "(Last lookahead)");
             // no intersection
             return last_lookahead;
         }
@@ -85,7 +85,7 @@ public class PathFollower {
 
         double x = Math.abs(a * look_ahead.x + b * look_ahead.y + c) / (Math.sqrt(a * a + b * b));
         double curvature = (2.0 * x) / (Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2));
-
+        //curvature *= 10;
         // calculate side mult
         double side = Math.signum(Math.sin(robot_angle) * (look_ahead.x - robot_pos.x) - Math.cos(robot_angle) * (look_ahead.y - robot_pos.y));
         //System.out.println("Curvature: " + curvature + ", side: " + side);
@@ -96,13 +96,12 @@ public class PathFollower {
     public VelocitySetpoint update(Vector2 robot_pos, double robot_angle) {
         Vector2 lookahead = calculateLookahead(robot_pos);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
-        //if(curvature > 0.1) curvature = 0.5;
-        //if(curvature < -0.1) curvature = -0.05;
+        //curvature *= 2.0;
         VelocitySetpoint set = new VelocitySetpoint();
-        set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
-        set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         //System.out.println();
-        System.out.println( "lookahead:  " + lookahead + ", Robot position: " + robot_pos + ", closest point index: " + m_path.findClosestPointIndex(robot_pos) + ", curvature: " + curvature);
+        //System.out.println( "lookahead:  " + lookahead + ", Robot position: " + robot_pos + ", closest point index: " + m_path.findClosestPointIndex(robot_pos) + ", curvature: " + curvature);
         if(m_path.getBackwards()) {
             set.left_velocity *= -1;
             set.right_velocity *= -1;

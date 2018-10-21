@@ -12,6 +12,8 @@ public class PathFollower {
     private Path m_path;
     private Vector2 last_lookahead;
 
+    private int counter = 0;
+
     public PathFollower(Path path) {
         m_path = path;
         last_lookahead = m_path.getPoint(1);
@@ -21,7 +23,10 @@ public class PathFollower {
     private Vector2 calculateLookahead(Vector2 robot_pos) {
         int index = m_path.findClosestPointIndex(robot_pos);
         Vector2 lookahead = null;
+        counter++;
+        int inner_counter = 1;
         for(int i = index; i < m_path.getPathLength() - 1; i++) {
+            inner_counter++;
             Vector2 begin = m_path.getPoint(i);
             Vector2 end =  m_path.getPoint(i + 1);
             Vector2 d = Vector2.subtract(end, begin);
@@ -39,10 +44,13 @@ public class PathFollower {
                 double t1 = (-b - dis) / (2.0 * a);
                 double t2 = (-b + dis) / (2.0 * a);
 
+
+
                 if(t1 >= 0 && t1 <= 1) {
                     Vector2 temp = Vector2.multiply(d, t1);
                     lookahead = Vector2.add(begin, temp);
                     last_lookahead = Vector2.copyVector(lookahead);
+                    System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
                     break;
                 } 
 
@@ -50,6 +58,7 @@ public class PathFollower {
                     Vector2 temp = Vector2.multiply(d, t2);
                     lookahead = Vector2.add(begin, temp);
                     last_lookahead = Vector2.copyVector(lookahead);
+                    System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
                     break;
                 }
 
@@ -60,6 +69,7 @@ public class PathFollower {
 
         if(lookahead == null) {
             lookahead = last_lookahead;
+            System.out.println("Using Last Lookahead: " +  last_lookahead);
         }
         return lookahead;
 

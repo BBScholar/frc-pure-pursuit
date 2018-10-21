@@ -52,6 +52,10 @@ public class Vector2 {
 	public static double dot(Vector2 a, Vector2 b) {
 		return a.x * b.x + a.y * b.y;
 	}
+
+	public static Vector2 multiply(Vector2 a, double coef) {
+		return new Vector2(a.x * coef , a.y * coef);
+	}
 	
 	/**
 	 * Multiplies this vector by a scalar.

@@ -31,7 +31,7 @@ public class Path {
             CSVReader reader = new CSVReader(new FileReader(filepath));
             String[] line = reader.readNext();
             while(line!=null) {
-                temp_coords.add(new Vector2( Double.parseDouble(line[0]), Double.parseDouble(line[1])));
+                temp_coords.add(new Vector2( Double.parseDouble(line[1]), Double.parseDouble(line[0])));
                 temp_velo.add(Double.parseDouble(line[2]));
                 line = reader.readNext();
             }

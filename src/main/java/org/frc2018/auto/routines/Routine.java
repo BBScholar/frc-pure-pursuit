@@ -11,7 +11,7 @@ public class Routine {
     private int m_step_number;
 
     public Routine() {
-        m_actions = new ArrayList<>();
+        m_actions = new ArrayList<Action>();
         m_step_number = 0;
     }
 
@@ -34,10 +34,6 @@ public class Routine {
     }
 
     public boolean isFinished() {
-        if(m_step_number == m_actions.size() - 1 && getCurrentAction().isFinished()) {
-            return true;
-        }
-        return false;
+        return m_step_number == m_actions.size() - 1 && getCurrentAction().isFinished();
     }
-
 }

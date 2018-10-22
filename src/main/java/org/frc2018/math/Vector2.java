@@ -1,7 +1,5 @@
 package org.frc2018.math;
 
-import java.util.Vector;
-
 public class Vector2 {
 
 	public double x = 0.0, y = 0.0;

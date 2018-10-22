@@ -14,27 +14,15 @@ import org.frc2018.path.Path;
 import org.frc2018.path.PathFollower;
 import org.frc2018.path.PathFollower.VelocitySetpoint;
 
-public class Drive implements Subsystem {
-
-    private static Drive m_instance = new Drive();
-
-    /**
-     * 
-     * @return
-     */
-    public static Drive getInstance() {
-        return m_instance;
-    }
+public class Drivetrain extends Subsystem {
 
     /**
      * 
      */
     public enum DriveMode {
-        OPEN_LOOP,
-        TURN_TO_HEADING,
-        DRIVE_STRAIGHT,
-        VELOCITY_SETPOINT,
-        FOLLOW_PATH,
+        OPEN_LOOP, // drive with the given percentage outputs
+        POSITION_LOOP, // drive the specified distance
+        VELOCITY_LOOP, // drive the specified velocities
     }
 
     /**
@@ -150,10 +138,6 @@ public class Drive implements Subsystem {
                     //System.out.println("Velocity target - left: " + leftSet + ", right: " + rightSet);
                     //System.out.println("Velocity Error - left: " + leftError + ", right: " + rightError);
                 }
-                return;
-            case TURN_TO_HEADING:
-                // something here
-                // updateTurnToHeading();
                 return;
             case DRIVE_STRAIGHT:
             

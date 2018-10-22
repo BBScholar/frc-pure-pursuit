@@ -1,9 +1,9 @@
 package org.frc2018.auto.actions;
 
 import org.frc2018.path.Path;
-import org.frc2018.subsystems.Drive;
+import org.frc2018.subsystems.Drivetrain;
 
-public class DrivePathAction implements Action {
+public class DrivePathAction extends Action {
 
     private Path m_path;
 
@@ -13,7 +13,7 @@ public class DrivePathAction implements Action {
 
     @Override
     public void start() {
-        Drive.getInstance().setWantDrivePath(m_path);
+        Drivetrain.getInstance().setWantDrivePath(m_path);
     }
 
     @Override

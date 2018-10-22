@@ -1,13 +1,15 @@
 package org.frc2018.auto.actions;
 
-public interface Action {
+public class Action {
 
-    public void start();
+    public Action() {}
 
-    public void update();
+    public void start() {}
 
-    public boolean isFinished();
+    public void update() {}
 
-    public void done();
+    public boolean isFinished() {return true;}
+
+    public void done() {}
 
 }

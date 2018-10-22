@@ -1,26 +1,25 @@
 package org.frc2018.subsystems;
 
-public interface Subsystem {
+public class Subsystem {
+
+    public Subsystem() {
+        // Eventually, this will start broadcast loop to smart dashboard
+    }
 
     /**
      * used to call nessesary functions every robot tick
      */
-    public void update();
+    public void update() {}
 
     /**
-     * outputs and recieves data from smart dashboard
+     * broadcast to smart dashboard
      */
-    public void outputToSmartDashboard();
-
-    /**
-     * stops the subsystem
-     */
-    public void stop();
+    public void broadcastToSmartDashboard() {}
 
     /**
      * resets subsystem,
      * ex: reset sensors
      */
-    public void reset();
+    public void reset() {}
 
 }

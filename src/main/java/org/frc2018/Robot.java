@@ -5,7 +5,7 @@ import org.frc2018.auto.actions.DrivePathAction;
 import org.frc2018.auto.actions.NothingAction;
 import org.frc2018.auto.routines.Routine;
 import org.frc2018.path.Path;
-import org.frc2018.subsystems.Drive;
+import org.frc2018.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -13,11 +13,10 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Robot extends TimedRobot {
 
-    private XboxController driver = new XboxController(0);
     private AutoRoutineHandler handler = null;
 
     public Robot() {
-        super.setPeriod(0.005);
+        super.setPeriod(Constants.UPDATE_PERIOD);
     }
 
     @Override

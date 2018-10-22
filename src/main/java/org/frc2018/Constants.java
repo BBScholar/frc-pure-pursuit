@@ -39,5 +39,6 @@ public class Constants {
     public static final int    POS_MAX_ACCEL = 1000; // encoder ticks per 100ms
 
     public static final double LOOK_AHEAD_DISTANCE = 24.0; // inches
+    public static final double STOP_STEERING_DISTANCE = 6.0; // inches
 
 }

@@ -7,17 +7,21 @@ import org.frc2018.Constants;
 import org.frc2018.math.Vector2;
 import org.frc2018.path.Path;
 
+
 public class PathFollower {
 
     private Path m_path;
-    private Vector2 last_lookahead;
+    private Vector2 m_last_lookahead;
+
+    private boolean m_stopped_steering;
 
     private int counter = 0;
 
     public PathFollower(Path path) {
         m_path = path;
-        last_lookahead = m_path.getPoint(1);
-        //last_lookahead = null;
+        m_last_lookahead = m_path.getPoint(1);
+        m_stopped_steering = false;
+        //m_last_lookahead = null;
     }
 
     private Vector2 calculateLookahead(Vector2 robot_pos) {
@@ -44,12 +48,10 @@ public class PathFollower {
                 double t1 = (-b - dis) / (2.0 * a);
                 double t2 = (-b + dis) / (2.0 * a);
 
-
-
                 if(t1 >= 0 && t1 <= 1) {
                     Vector2 temp = Vector2.multiply(d, t1);
                     lookahead = Vector2.add(begin, temp);
-                    last_lookahead = Vector2.copyVector(lookahead);
+                    m_last_lookahead = Vector2.copyVector(lookahead);
                     System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
                     break;
                 } 
@@ -57,7 +59,7 @@ public class PathFollower {
                 if(t2 >= 0 && t2 <= 1) {
                     Vector2 temp = Vector2.multiply(d, t2);
                     lookahead = Vector2.add(begin, temp);
-                    last_lookahead = Vector2.copyVector(lookahead);
+                    m_last_lookahead = Vector2.copyVector(lookahead);
                     System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
                     break;
                 }
@@ -68,8 +70,8 @@ public class PathFollower {
         }
 
         if(lookahead == null) {
-            lookahead = last_lookahead;
-            System.out.println("Using Last Lookahead: " +  last_lookahead);
+            lookahead = m_last_lookahead;
+            System.out.println("Using Last Lookahead: " +  m_last_lookahead);
         }
         return lookahead;
 
@@ -95,16 +97,40 @@ public class PathFollower {
         return curvature * side;
     }
 
+    private void checkStopSteering(Vector2 robot_pos) {
+        Vector2 endpoint = m_path.getPoint(m_path.getPathLength() - 1);
+        double distance = Vector2.distanceBetween(robot_pos, endpoint);
+        // TODO: Maybe check progress along path before stop steering
+        if(distance < Constants.STOP_STEERING_DISTANCE && m_path.findClosestPointIndex(robot_pos) < m_path.getPathLength() - 4) {
+            m_stopped_steering = true;
+        }
+    }
+
     public VelocitySetpoint update(Vector2 robot_pos, double robot_angle) {
+        VelocitySetpoint set = new VelocitySetpoint();
+        if(!m_stopped_steering){
+            checkStopSteering(robot_pos);
+        }
+        
+        if(m_stopped_steering) {
+            set.left_velocity = m_path.getClosestPointVelocity(robot_pos);
+            set.right_velocity = m_path.getClosestPointVelocity(robot_pos);
+            return set;
+        }
+
         Vector2 lookahead = calculateLookahead(robot_pos);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
         //curvature *= 2.0;
         //System.out.println("Lookahead: " + lookahead);
-        VelocitySetpoint set = new VelocitySetpoint();
+
         set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
         set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         //System.out.println();
         //System.out.println( "lookahead:  " + lookahead + ", Robot position: " + robot_pos + ", closest point index: " + m_path.findClosestPointIndex(robot_pos) + ", curvature: " + curvature);
+        
+        
+
+        
         if(m_path.getBackwards()) {
             set.left_velocity *= -1;
             set.right_velocity *= -1;
@@ -117,6 +143,10 @@ public class PathFollower {
         m_path = path;
     }
     */
+
+    public boolean getStoppedSteering() {
+        return m_stopped_steering;
+    }
 
     public boolean doneWithPath(Vector2 robot_pos) {
         return m_path.doneWithPath(robot_pos);

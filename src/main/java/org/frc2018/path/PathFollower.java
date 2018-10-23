@@ -24,8 +24,9 @@ public class PathFollower {
         //m_last_lookahead = null;
     }
 
-    private Vector2 calculateLookahead(Vector2 robot_pos) {
+    private Vector2 calculateLookahead(Vector2 robot_pos, double robot_angle) {
         int index = m_path.findClosestPointIndex(robot_pos);
+        // System.out.println("closest point index:" + index);
         Vector2 lookahead = null;
         counter++;
         int inner_counter = 1;
@@ -36,6 +37,9 @@ public class PathFollower {
             Vector2 d = Vector2.subtract(end, begin);
             Vector2 f = Vector2.subtract(begin, robot_pos);
 
+            /**
+             * find the distance from the 
+             */
             double a = Vector2.dot(d,d);
             double b = 2.0 * Vector2.dot(f, d);
             double c = Vector2.dot(f, f) - Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2);
@@ -52,26 +56,29 @@ public class PathFollower {
                     Vector2 temp = Vector2.multiply(d, t1);
                     lookahead = Vector2.add(begin, temp);
                     m_last_lookahead = Vector2.copyVector(lookahead);
-                    System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
-                    break;
-                } 
-
-                if(t2 >= 0 && t2 <= 1) {
+                    // System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
+                } else if(t2 >= 0 && t2 <= 1) {
                     Vector2 temp = Vector2.multiply(d, t2);
                     lookahead = Vector2.add(begin, temp);
                     m_last_lookahead = Vector2.copyVector(lookahead);
-                    System.out.println("Loop " + counter + " - " + inner_counter + " -- Robot pos: " + robot_pos + ", Beggining point: " + begin + ", End point: " + end + ", lookahead: " + lookahead);
-                    break;
+                    System.out.println(lookahead);
                 }
-
-                continue;
             }
 
         }
 
         if(lookahead == null) {
-            lookahead = m_last_lookahead;
-            System.out.println("Using Last Lookahead: " +  m_last_lookahead);
+            lookahead = m_path.getPoint(m_path.getPathLength() - 1);
+            System.out.println("Using Last Lookahead: " +  lookahead);
+        } else {
+            Vector2 robot_to_lookahead = Vector2.subtract(lookahead, robot_pos);
+            Vector2 robot_direction = Vector2.representHeadingWithUnitVector(-Math.toDegrees(robot_angle) + 90);
+            double angle_to_lookahead = Math.abs(Vector2.angleBetween(robot_to_lookahead, robot_direction));
+            double distance_between_robot_lookahead = Vector2.distanceBetween(robot_pos, m_path.getPoint(m_path.getPathLength() - 1));
+            if (angle_to_lookahead > 90 && distance_between_robot_lookahead < Constants.LOOK_AHEAD_DISTANCE) {
+                lookahead = m_path.getPoint(m_path.getPathLength() - 1);
+            }
+            System.out.println(angle_to_lookahead);
         }
         return lookahead;
 
@@ -108,17 +115,17 @@ public class PathFollower {
 
     public VelocitySetpoint update(Vector2 robot_pos, double robot_angle) {
         VelocitySetpoint set = new VelocitySetpoint();
-        if(!m_stopped_steering){
-            checkStopSteering(robot_pos);
-        }
+        // if(!m_stopped_steering){
+        //     checkStopSteering(robot_pos);
+        // }
         
-        if(m_stopped_steering) {
-            set.left_velocity = m_path.getClosestPointVelocity(robot_pos);
-            set.right_velocity = m_path.getClosestPointVelocity(robot_pos);
-            return set;
-        }
+        // if(m_stopped_steering) {
+        //     set.left_velocity = m_path.getClosestPointVelocity(robot_pos);
+        //     set.right_velocity = m_path.getClosestPointVelocity(robot_pos);
+        //     return set;
+        // }
 
-        Vector2 lookahead = calculateLookahead(robot_pos);
+        Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
         //curvature *= 2.0;
         //System.out.println("Lookahead: " + lookahead);

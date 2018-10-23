@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.opencsv.CSVReader;
 
+import org.frc2018.Constants;
 import org.frc2018.math.Vector2;
 
 public class Path {
@@ -50,6 +51,13 @@ public class Path {
             e.printStackTrace();
         }
 
+        // extend the last line segment by the lookahead distance
+        Vector2 last_segment_unit_direction = Vector2.unitDirectionVector(Vector2.subtract(coordinates[coordinates.length - 1], coordinates[coordinates.length - 2]));
+        System.out.println(last_segment_unit_direction);
+        coordinates[coordinates.length - 1] = Vector2.add(coordinates[coordinates.length - 1], Vector2.multiply(last_segment_unit_direction, Constants.LOOK_AHEAD_DISTANCE));
+        for(Vector2 i : coordinates) {
+            System.out.println(i);
+        }
     }
 
     public Vector2 getClosestPoint(Vector2 robot_pos) {

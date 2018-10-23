@@ -1,7 +1,6 @@
 package org.frc2018.math;
 
 import java.text.DecimalFormat;
-import java.util.Vector;
 
 public class Vector2 {
 
@@ -157,6 +156,17 @@ public class Vector2 {
 	 */
 	public static double distanceBetween(Vector2 from, Vector2 to) {
 		return new Vector2(from.y-to.y, from.x-to.x).getMagnitude();
+	}
+
+	/**
+	 * Gets the direction fector of a given vector that is one unit.
+	 * 
+	 * @param vector the vector
+	 * 
+	 * @return The unit direction vector
+	 */
+	public static Vector2 unitDirectionVector(Vector2 vector) {
+		return Vector2.multiply(vector, 1 / Vector2.dot(vector, vector));
 	}
 	
 	/**

@@ -23,6 +23,11 @@ deploy {
         artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
             targets << "roborio"
         }
+        // artifact('dashboard', jaci.gradle.deploy.artifact.FileTreeArtifact) {
+        //     targets << "roborio"
+        //     files = fileTree(dir: 'dashboard')
+        //     directory = "dashboard"
+        // }
     }
 }
 

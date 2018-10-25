@@ -168,6 +168,12 @@ public class Vector2 {
 	public static Vector2 unitDirectionVector(Vector2 vector) {
 		return Vector2.multiply(vector, 1 / Vector2.dot(vector, vector));
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		Vector2 vector = (Vector2) o;
+		return (vector.x == this.x && vector.y == this.y);
+	}
 	
 	/**
 	 * A vector with 0 magnitude.

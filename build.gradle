@@ -23,10 +23,6 @@ deploy {
         artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
             targets << "roborio"
         }
-        artifact('dashboard', jaci.gradle.deploy.artifact.FileCollectionArtifact) {
-            files = fileTree(dir: 'dashboard')
-            targets << "roborio"
-        }
     }
 }
 

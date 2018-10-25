@@ -61,7 +61,6 @@ public class PathFollower {
                     Vector2 temp = Vector2.multiply(d, t2);
                     lookahead = Vector2.add(begin, temp);
                     m_last_lookahead = Vector2.copyVector(lookahead);
-                    System.out.println(lookahead);
                 }
             }
 

@@ -331,7 +331,8 @@ public class Drive implements Subsystem {
         robot_angle = Math.toRadians(robot_angle);
         VelocitySetpoint setpoints = m_path_follower.update(robot_pos, robot_angle);
         //System.out.println("Vel set -- left: " + setpoints.left_velocity + ", right: " + setpoints.right_velocity);
-        updateVelocitySetpoint(setpoints.left_velocity, setpoints.right_velocity);
+        // updateVelocitySetpoint(setpoints.left_velocity, setpoints.right_velocity);
+        updateVelocitySetpoint(0, 0);
     }
 
     public boolean doneWithPath() {

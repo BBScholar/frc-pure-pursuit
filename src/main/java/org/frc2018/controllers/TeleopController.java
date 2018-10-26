@@ -18,7 +18,7 @@ public class TeleopController extends Controller {
     @Override
     public void init() {
         Drivetrain.getInstance().setBrakeMode(false);
-        Drivetrain.getInstance().setPercent(0, 0);
+        Drivetrain.getInstance().stop();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TeleopController extends Controller {
 
         Drivetrain.getInstance().setPercent(base + turn, base - turn);
 
-        double arm = -codriver.getY(Hand.kLeft) * Constants.MAX_ARM_SPEED;
+        double arm = Math.abs(codriver.getY(Hand.kLeft)) < Constants.XBOX_DEADBAND ? 0 : driver.getY(Hand.kLeft) * Constants.MAX_ARM_SPEED;
 
         Arm.getInstance().setArm(arm);
 

@@ -2,6 +2,7 @@ package org.frc2018;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 
+import org.frc2018.controllers.AutoController;
 import org.frc2018.controllers.TeleopController;
 import org.frc2018.subsystems.Arm;
 import org.frc2018.subsystems.Drivetrain;
@@ -25,7 +26,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        Drivetrain.getInstance().setPercent(0, 0);
+        Drivetrain.getInstance().stop();
         Drivetrain.getInstance().reset();
     }
 
@@ -36,10 +37,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        AutoController.getInstance().init();
     }
 
     @Override
     public void autonomousPeriodic() {
+        AutoController.getInstance().handle();
     }
 
     @Override

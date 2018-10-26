@@ -36,7 +36,7 @@ public class Arm extends Subsystem {
 
     public void hold() {
         m_left_intake.set(ControlMode.PercentOutput, Constants.INTAKE_HOLD_SPEED);
-        m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE__HOLD_SPEED);
+        m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE_HOLD_SPEED);
     }
 
     public void drop() {

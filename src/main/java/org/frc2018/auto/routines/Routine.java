@@ -7,6 +7,9 @@ import org.frc2018.auto.actions.Action;
 
 public class Routine {
 
+    public static final String CURRENT_ROUTINE = "__default__";
+    public static final String NOT_FINISHED = "";
+
     private List<Action> m_actions;
     private int m_step_number;
 
@@ -34,6 +37,6 @@ public class Routine {
     }
 
     public boolean isFinished() {
-        return m_step_number == m_actions.size() - 1 && getCurrentAction().isFinished();
+        return m_step_number == m_actions.size() - 1 && getCurrentAction().next() != NOT_FINISHED;
     }
 }

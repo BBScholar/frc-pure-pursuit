@@ -2,7 +2,7 @@ package org.frc2018.controllers;
 
 public class Controller {
 
-    public Controller() {
+    protected Controller() {
     }
 
     public void init() {

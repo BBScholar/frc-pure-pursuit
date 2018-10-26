@@ -363,6 +363,14 @@ public class Drivetrain extends Subsystem {
         return xyz[1];
     }
 
+    /**
+     * 
+     * @return robot position vector
+     */
+    public Vector2 getRobotPosition() {
+        return Position.getInstance().getPositionVector();
+    }
+
     // configurations
 
     /**

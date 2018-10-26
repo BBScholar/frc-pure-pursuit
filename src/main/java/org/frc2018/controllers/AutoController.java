@@ -14,7 +14,7 @@ public class AutoController extends Controller {
 
     @Override
     public void init() {
-        Path path = new Path("/home/lvuser/paths/path.csv");
+        Path path = new Path("/home/lvuser/paths/path.csv", true);
         System.out.println(path);
         drive_action = new DrivePathAction(path, 1000);
         drive_action.start();

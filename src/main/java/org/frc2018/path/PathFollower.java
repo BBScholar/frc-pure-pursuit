@@ -90,8 +90,8 @@ public class PathFollower {
         Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
 
-        output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
-        output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
 
         return output;
     }

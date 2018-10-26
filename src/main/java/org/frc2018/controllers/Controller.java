@@ -12,4 +12,8 @@ public class Controller {
     public void handle() {
 
     }
+
+    public void reset() {
+        
+    }
 }

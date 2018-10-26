@@ -631,7 +631,7 @@ class Position {
         double radius_of_curvature = distance / angle_delta;
         double delta_y = radius_of_curvature * Math.sin(angle_delta);
         double delta_x = radius_of_curvature * (Math.cos(angle_delta) - 1);
-        y += delta_x * Math.cos(last_angle) - delta_y * Math.sin(last_angle);
+        y -= delta_x * Math.cos(last_angle) - delta_y * Math.sin(last_angle);
         x +=  delta_x * Math.sin(last_angle) + delta_y * Math.cos(last_angle);
         last_left = left_distance;
         last_right = right_distance;

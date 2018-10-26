@@ -6,6 +6,7 @@ public class Constants { // temp, in place of dashboard
 
     public static final int         DRIVER_PORT                 = 0;
     public static final int         CODRIVER_PORT               = 1;
+    public static final double      XBOX_TURN_MULTIPLIER        = 0.4;
 
     public static final int         LEFT_MASTER_PORT            = 2;
     public static final int         LEFT_SLAVE_PORT             = 1;

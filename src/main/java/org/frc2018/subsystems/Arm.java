@@ -13,15 +13,12 @@ public class Arm extends Subsystem {
     private Arm() {
         m_arm = new TalonSRX(Constants.ARM_PORT);
         m_left_intake = new TalonSRX(Constants.LEFT_INTAKE_PORT);
-        m_left_intake = new TalonSRX(Constants.RIGHT_INTAKE_PORT);
+        m_right_intake = new TalonSRX(Constants.RIGHT_INTAKE_PORT);
 
         m_left_intake.setInverted(Constants.INVERT_INTAKE);
         m_right_intake.setInverted(!Constants.INVERT_INTAKE);
 
         m_arm.setInverted(Constants.INVERT_ARM);
-
-        m_left_intake.setNeutralMode(NeutralMode.Brake);
-        m_right_intake.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
@@ -30,21 +27,29 @@ public class Arm extends Subsystem {
     }
 
     public void intake() {
+        m_left_intake.setNeutralMode(NeutralMode.Brake);
+        m_right_intake.setNeutralMode(NeutralMode.Brake);
         m_left_intake.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
         m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE_SPEED);
     }
 
     public void hold() {
+        m_left_intake.setNeutralMode(NeutralMode.Brake);
+        m_right_intake.setNeutralMode(NeutralMode.Brake);
         m_left_intake.set(ControlMode.PercentOutput, Constants.INTAKE_HOLD_SPEED);
         m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE_HOLD_SPEED);
     }
 
     public void drop() {
+        m_left_intake.setNeutralMode(NeutralMode.Brake);
+        m_right_intake.setNeutralMode(NeutralMode.Brake);
         m_left_intake.set(ControlMode.PercentOutput, Constants.INTAKE_DROP_SPEED);
         m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE_DROP_SPEED);
     }
 
     public void spit() {
+        m_left_intake.setNeutralMode(NeutralMode.Brake);
+        m_right_intake.setNeutralMode(NeutralMode.Brake);
         m_left_intake.set(ControlMode.PercentOutput, Constants.INTAKE_SPIT_SPEED);
         m_right_intake.set(ControlMode.PercentOutput, Constants.INTAKE_SPIT_SPEED);
     }
@@ -67,7 +72,8 @@ public class Arm extends Subsystem {
 
     @Override
     public void reset() {
-
+        m_left_intake.setNeutralMode(NeutralMode.Coast);
+        m_right_intake.setNeutralMode(NeutralMode.Coast);
     }
 
     private static Arm _instance = new Arm();

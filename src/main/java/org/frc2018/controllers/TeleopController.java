@@ -26,9 +26,11 @@ public class TeleopController extends Controller {
         double base = Math.abs(driver.getY(Hand.kLeft)) < Constants.XBOX_DEADBAND ? 0 : driver.getY(Hand.kLeft);
         double turn = Math.abs(driver.getX(Hand.kRight)) < Constants.XBOX_DEADBAND ? 0 : driver.getX(Hand.kRight);
 
-        Drivetrain.getInstance().setPercent(base + turn, base - turn);
+        turn = (driver.getBumper(Hand.kRight)) ? turn : turn * Constants.XBOX_TURN_MULTIPLIER;
 
-        double arm = Math.abs(codriver.getY(Hand.kLeft)) < Constants.XBOX_DEADBAND ? 0 : driver.getY(Hand.kLeft) * Constants.MAX_ARM_SPEED;
+        Drivetrain.getInstance().setPercent(-base + turn, -base - turn);
+
+        double arm = Math.abs(codriver.getY(Hand.kLeft)) < Constants.XBOX_DEADBAND ? 0 : codriver.getY(Hand.kLeft) * Constants.MAX_ARM_SPEED;
 
         Arm.getInstance().setArm(arm);
 
@@ -37,6 +39,10 @@ public class TeleopController extends Controller {
         else if(codriver.getTriggerAxis(Hand.kLeft) > Constants.XBOX_DEADBAND) Arm.getInstance().hold();
         else if(codriver.getTriggerAxis(Hand.kRight) > Constants.XBOX_DEADBAND) Arm.getInstance().drop();
         else Arm.getInstance().stopIntake();
+    }
+
+    @Override
+    public void reset() {
     }
 
     private static TeleopController _instance = new TeleopController();

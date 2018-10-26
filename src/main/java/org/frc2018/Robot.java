@@ -28,6 +28,8 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         Drivetrain.getInstance().stop();
         Drivetrain.getInstance().reset();
+        Arm.getInstance().stop();
+        Arm.getInstance().reset();
     }
 
     @Override

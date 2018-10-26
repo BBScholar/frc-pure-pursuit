@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.opencsv.CSVReader;
 
+import org.frc2018.Constants;
 import org.frc2018.math.Vector2;
 
 public class Path {
@@ -31,7 +32,7 @@ public class Path {
             CSVReader reader = new CSVReader(new FileReader(filepath));
             String[] line = reader.readNext();
             while(line!=null) {
-                temp_coords.add(new Vector2( Double.parseDouble(line[0]), Double.parseDouble(line[1])));
+                temp_coords.add(new Vector2( Double.parseDouble(line[1]), Double.parseDouble(line[0])));
                 temp_velo.add(Double.parseDouble(line[2]));
                 line = reader.readNext();
             }
@@ -50,6 +51,13 @@ public class Path {
             e.printStackTrace();
         }
 
+        // extend the last line segment by the lookahead distance
+        Vector2 last_segment_unit_direction = Vector2.unitDirectionVector(Vector2.subtract(coordinates[coordinates.length - 1], coordinates[coordinates.length - 2]));
+        System.out.println(last_segment_unit_direction);
+        coordinates[coordinates.length - 1] = Vector2.add(coordinates[coordinates.length - 1], Vector2.multiply(last_segment_unit_direction, Constants.LOOK_AHEAD_DISTANCE));
+        for(Vector2 i : coordinates) {
+            System.out.println(i);
+        }
     }
 
     public Vector2 getClosestPoint(Vector2 robot_pos) {
@@ -97,6 +105,10 @@ public class Path {
         }
         last_closest_index = index;
         return index;
+    }
+
+    public int getPathLength() {
+        return coordinates.length;
     }
 
     public boolean getBackwards() {

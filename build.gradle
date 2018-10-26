@@ -23,6 +23,11 @@ deploy {
         artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
             targets << "roborio"
         }
+        // artifact('dashboard', jaci.gradle.deploy.artifact.FileTreeArtifact) {
+        //     targets << "roborio"
+        //     files = fileTree(dir: 'dashboard')
+        //     directory = "dashboard"
+        // }
     }
 }
 
@@ -34,6 +39,9 @@ wpi {
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
+
     compile wpilib()
     compile ctre()
     compile group: 'com.opencsv', name: 'opencsv', version: '3.7'
@@ -42,9 +50,26 @@ dependencies {
     compile group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '1.13.1'
     compile group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '1.13.1'
     compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.5.1'
-
 }
 
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+        showStandardStreams true
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} tests, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed, " +
+                    "${result.skippedTestCount} skipped"
+        }
+    }
+}
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.

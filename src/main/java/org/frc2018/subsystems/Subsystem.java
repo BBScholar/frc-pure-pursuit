@@ -22,4 +22,6 @@ public class Subsystem {
      */
     public void reset() {}
 
+    public void stop() {}
+
 }

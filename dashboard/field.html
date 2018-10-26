@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Field View</title>
+        <link rel="stylesheet" type="text/css" href="styles/field.css">
+    </head>
+    <body class="body">
+        <div id="field_container">
+            <img src="resources/FieldRender.jpg" id="field">
+            <img src="resources/RobotRender.png" id="robot">
+        </div>
+
+        <div id="settings_container">
+            <select id="side">
+                <option value="left">Red</option>
+                <option value="right">Blue</option>
+            </select>
+            <select id="position">
+                <option value="left_outer">Left Outer</option>
+                <option value="left_inner">Left Inner</option>
+                <option value="center">Center</option>
+                <option value="right_inner">Right Inner</option>
+                <option value="right_outer">Right Outer</option>
+            </select>
+        </div>
+
+
+        <script src="scripts/field_bundle.js"></script>
+    </body>
+</html>

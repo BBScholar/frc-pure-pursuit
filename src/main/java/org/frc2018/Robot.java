@@ -1,19 +1,10 @@
 package org.frc2018;
 
-import org.frc2018.auto.AutoRoutineHandler;
-import org.frc2018.auto.actions.DrivePathAction;
-import org.frc2018.auto.actions.NothingAction;
-import org.frc2018.auto.routines.Routine;
-import org.frc2018.path.Path;
+import edu.wpi.first.wpilibj.TimedRobot;
+
 import org.frc2018.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-
 public class Robot extends TimedRobot {
-
-    private AutoRoutineHandler handler = null;
 
     public Robot() {
         super.setPeriod(Constants.UPDATE_PERIOD);
@@ -31,7 +22,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        Drive.getInstance().setOpenLoop(0, 0);
+        Drive.getInstance().setPercent(0, 0);
         // Drive.getInstance().setBrakeMode(true);
         Drive.getInstance().reset();
     }
@@ -73,8 +64,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         Drive.getInstance().update();
-        double value = -driver.getY(Hand.kLeft);
-        //Drive.getInstance().setOpenLoop(value, value);
         Drive.getInstance().setOpenLoop(-driver.getY(Hand.kLeft), -driver.getY(Hand.kRight));
         Drive.getInstance().update();
     }

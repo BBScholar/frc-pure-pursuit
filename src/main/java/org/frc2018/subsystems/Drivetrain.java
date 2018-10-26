@@ -416,6 +416,7 @@ public class Drivetrain extends Subsystem {
 
         m_left_master.follow(m_right_master, FollowerType.AuxOutput1);
         m_left_master.setInverted(false);
+        m_left_slave.setInverted(false);
 
         m_left_master.setSensorPhase(false);
         m_right_master.setSensorPhase(true);
@@ -474,10 +475,11 @@ public class Drivetrain extends Subsystem {
         m_right_master.selectProfileSlot(1, 1);
 
         m_left_master.follow(m_right_master, FollowerType.AuxOutput1);
-        m_left_master.setInverted(true); // check this
 
         m_left_master.setSensorPhase(false);
-        m_right_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(true);
+        m_left_master.setInverted(true);
+        m_left_slave.setInverted(true);
 
         m_mode = DriveMode.TURN_LOOP;
     }
@@ -542,8 +544,9 @@ public class Drivetrain extends Subsystem {
         m_left_master.selectProfileSlot(1, 1);
 
         m_left_master.setInverted(false); // check this
+        m_left_slave.setInverted(false);
         m_left_master.setSensorPhase(false);
-        m_right_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(true);
 
         m_mode = DriveMode.VELOCITY_LOOP;
     }
@@ -554,6 +557,7 @@ public class Drivetrain extends Subsystem {
         m_right_master.configNominalOutputForward(0.0, 0);
         m_right_master.configNominalOutputReverse(0.0, 0);
         m_left_master.setInverted(false);
+        m_left_slave.setInverted(false);
         m_left_master.configPeakOutputForward(+1.0, 0);
         m_left_master.configPeakOutputReverse(-1.0, 0);
         m_right_master.configPeakOutputForward(+1.0, 0);

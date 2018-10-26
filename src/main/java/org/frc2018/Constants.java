@@ -40,7 +40,7 @@ public class Constants { // temp, in place of dashboard
     public static final int         TALON_PIDF_LOOP_PERIOD_MS   = 1;
     public static final boolean     INVERT_ANGLE_AUX_PIDF       = true;
     public static final boolean     INVERT_TURN_PIDF            = false;
-    public static final boolean     INVERT_FIXED_AUX_PIDF       = false;
+    public static final boolean     INVERT_FIXED_AUX_PIDF       = true;
 
     public static final double      MAX_VELOCITY_SETPOINT       = 120.0; // inches per second
     
@@ -70,13 +70,13 @@ public class Constants { // temp, in place of dashboard
     public static final int         ANGLE_IZONE                 = 10;
     public static final double      ANGLE_MAX_OUTPUT            = 1.0;
 
-    public static final double      TURN_kP                     = 1.0;
+    public static final double      TURN_kP                     = 1.3;
     public static final double      TURN_kI                     = 0.0;
-    public static final double      TURN_kD                     = 0.6;
+    public static final double      TURN_kD                     = 12.0;
     public static final double      TURN_kF                     = 0.0;
     public static final int         TURN_IZONE                  = 10;
     public static final double      TURN_MAX_OUTPUT             = 1.0;
-    public static final double      FIXED_kP                    = 0.0;
+    public static final double      FIXED_kP                    = 0.0; // Needs to be reversed somehow
     public static final double      FIXED_kI                    = 0.0;
     public static final double      FIXED_kD                    = 0.0;
     public static final double      FIXED_kF                    = 0.0;

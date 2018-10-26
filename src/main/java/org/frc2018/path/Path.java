@@ -30,7 +30,8 @@ public class Path {
             CSVReader reader = new CSVReader(new FileReader(filepath));
             String[] line = reader.readNext();
             while(line!=null) {
-                temp_coords.add(new Vector2(Double.parseDouble(line[0]), Double.parseDouble(line[1])));
+                if(backwards) temp_coords.add(new Vector2(Double.parseDouble(-line[0]), Double.parseDouble(-line[1])));
+                else temp_coords.add(new Vector2(Double.parseDouble(line[0]), Double.parseDouble(line[1])));
                 temp_velo.add(Double.parseDouble(line[2]));
                 line = reader.readNext();
             }
@@ -53,50 +54,31 @@ public class Path {
         coordinates[coordinates.length - 1] = Vector2.add(coordinates[coordinates.length - 1], Vector2.multiply(last_segment_unit_direction, Constants.LOOK_AHEAD_DISTANCE));
     }
 
-    public Vector2 getClosestPoint(Vector2 robot_pos) {
-        return coordinates[findClosestPointIndex(robot_pos)];
-    }
-
-    public Vector2 getNextPoint(Vector2 robot_pos) {
-        int closest_index = findClosestPointIndex(robot_pos);
-        if(closest_index == coordinates.length - 1) {
-            // return last point if no more points
-            return coordinates[findClosestPointIndex(robot_pos)];
-        }
-        return coordinates[findClosestPointIndex(robot_pos) + 1];
-    }
-
-    public double getClosestPointVelocity(Vector2 robot_pos) {
-        return target_velocities[findClosestPointIndex(robot_pos)];
-    }
-
-    public boolean doneWithPath(Vector2 robot_pos) {
-        if(findClosestPointIndex(robot_pos) == coordinates.length - 1) {
-            return true;
-        }
-        return false;
-    }
-
     public Vector2 getPoint(int index) {
         if(index >= coordinates.length || index < 0) {
             throw new IndexOutOfBoundsException();
         }
-        return coordinates[index];
+        return Vector2.copyVector(coordinates[index]);
     }
 
-    public int findClosestPointIndex(Vector2 robot_pos) {
-        int index = last_closest_index;
-        Vector2 last_closest = coordinates[index];
-        double min_distance = Vector2.distanceBetween(robot_pos, last_closest);
-        for(int i = index; i < coordinates.length; i++) {
-            Vector2 temp = coordinates[i];
-            double temp_distance = Vector2.distanceBetween(robot_pos, temp);
+    public double getPointVelocity(int index) {
+        if(index >= target_velocities.length || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        return new Double(target_velocities[index]);
+    }
+
+    public int findClosestPointIndex(Vector2 point, int last_index) {
+        Vector2 last_closest = coordinates[last_index];
+        double min_distance = Vector2.distanceBetween(point, last_closest);
+        int index = last_index;
+        for(int i = last_index; i < coordinates.length; i++) {
+            double temp_distance = Vector2.distanceBetween(point, coordinates[i]);
             if(temp_distance <  min_distance) {
                 index = i;
                 min_distance = temp_distance;
             }
         }
-        last_closest_index = index;
         return index;
     }
 }

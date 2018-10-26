@@ -101,21 +101,8 @@ public class PathFollower {
     }
 
     public VelocitySetpoint update(Vector2 robot_pos, double robot_angle) {
-        VelocitySetpoint set = new VelocitySetpoint();
-        // if(!m_stopped_steering){
-        //     checkStopSteering(robot_pos);
-        // }
-        
-        // if(m_stopped_steering) {
-        //     set.left_velocity = m_path.getClosestPointVelocity(robot_pos);
-        //     set.right_velocity = m_path.getClosestPointVelocity(robot_pos);
-        //     return set;
-        // }
-
         Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
-        //curvature *= 2.0;
-        //System.out.println("Lookahead: " + lookahead);
 
         set.left_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
         set.right_velocity = m_path.getClosestPointVelocity(robot_pos) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
@@ -144,11 +131,6 @@ public class PathFollower {
 
     public boolean doneWithPath(Vector2 robot_pos) {
         return m_path.doneWithPath(robot_pos);
-    }
-
-    public static class VelocitySetpoint {
-        public double left_velocity;
-        public double right_velocity;
     }
 
 }

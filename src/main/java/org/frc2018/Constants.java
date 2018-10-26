@@ -50,4 +50,7 @@ public class Constants {
     public static final double ARM_kD = 0.01;
     public static final double ARM_kF = 0.0;
 
+    public static final double MIN_ARM_ANGLE = 0.0; // angle when arm all the way down
+    public static final double MAX_ARM_ANGlE = 110.0 + 40.0; // angle when arm all the way up
+
 }

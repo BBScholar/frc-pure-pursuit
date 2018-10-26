@@ -26,6 +26,7 @@ public class Arm implements Subsystem {
     private TalonSRX m_talon;
 
     private ArmMode m_mode;
+    private double m_target_angle;
 
 
     private Arm() {
@@ -37,13 +38,12 @@ public class Arm implements Subsystem {
         m_talon.config_kD(ANGLE_PID_LOOP, Constants.ARM_kF, 0);
         m_talon.config_kF(ANGLE_PID_LOOP, Constants.ARM_kF, 0);
 
-
-
         m_talon.configReverseSoftLimitEnable(true, 0);
-        
+        //m_talon.configReverseSoftLimitThreshold(, 0);
 
 
         m_talon.setNeutralMode(NeutralMode.Brake);
+        m_target_angle = 0;
 
         m_mode = ArmMode.OPEN_LOOP;
     }
@@ -51,17 +51,36 @@ public class Arm implements Subsystem {
     public void setOpenLoop(double speed) {
         if(m_mode != ArmMode.OPEN_LOOP) {
             // do something
+            m_mode = ArmMode.OPEN_LOOP;
         }
         m_talon.set(ControlMode.PercentOutput, speed * Constants.OPEN_LOOP_ARM_MULT);
     }
 
     public void setAngle(double angle) {
-        
+        if(m_mode != ArmMode.ANGLE_CONTROL) {
+            m_mode = ArmMode.ANGLE_CONTROL;
+        }
+        m_target_angle = angle;
+        updateAngleControl(m_target_angle);
+    }
+
+    private void updateAngleControl(double angle) {
+        m_talon.set(ControlMode.Position, degressToPotentiometerValue(angle));
+    }
+
+    private static int degressToPotentiometerValue(double angle) {
+        return 0;
     }
 
     @Override
     public void update() {
-        
+        switch(m_mode) {
+            case OPEN_LOOP:
+                break;
+            case ANGLE_CONTROL:
+                updateAngleControl(m_target_angle);
+                break;
+        }
     }
 
     @Override

@@ -122,7 +122,7 @@ for i, w in enumerate(smooth_waypoints[1:], start=1):
 # WRITE RESULTS TO FILE
 with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
     for w in smooth_waypoints:
-        file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
+        file.write(str(-w[1]) + "," + str(w[0]) + "," + str(w[5]) + "\n")
 
 # DISPLAY COLOR-CODED IMAGE OF PATH
 cv2.circle(img, (int(start_pos[0]+smooth_waypoints[0][0]*scaler),

@@ -2,15 +2,14 @@ package org.frc2018.controllers;
 
 public class Controller {
 
-    private 
-
     public Controller() {
+    }
+
+    public void init() {
 
     }
 
-    private static Controller _instance = new Controller();
+    public void handle() {
 
-    public static Controller getInstance() {
-        return _instance;
     }
 }

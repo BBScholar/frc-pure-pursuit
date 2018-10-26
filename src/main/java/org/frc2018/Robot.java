@@ -2,6 +2,8 @@ package org.frc2018;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 
+import org.frc2018.controllers.TeleopController;
+import org.frc2018.subsystems.Arm;
 import org.frc2018.subsystems.Drivetrain;
 
 public class Robot extends TimedRobot {
@@ -18,6 +20,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         Drivetrain.getInstance().update();
+        Arm.getInstance().update();
     }
 
     @Override
@@ -41,12 +44,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        Drivetrain.getInstance().setBrakeMode(false);
-        Drivetrain.getInstance().setPercent(0, 0);
+        TeleopController.getInstance().init();
     }
 
     @Override
     public void teleopPeriodic() {
+        TeleopController.getInstance().handle();
     }
 
     @Override

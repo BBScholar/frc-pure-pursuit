@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.frc2018.Constants;
-import org.frc2018.math.Vector2;
+import org.frc2018.Vector2;
 import org.frc2018.path.Path;
 
 
@@ -13,20 +13,13 @@ public class PathFollower {
     private Path m_path;
     private Vector2 m_last_lookahead;
 
-    private boolean m_stopped_steering;
-
-    private int counter = 0;
-
     public PathFollower(Path path) {
         m_path = path;
         m_last_lookahead = m_path.getPoint(1);
-        m_stopped_steering = false;
-        //m_last_lookahead = null;
     }
 
     private Vector2 calculateLookahead(Vector2 robot_pos, double robot_angle) {
         int index = m_path.findClosestPointIndex(robot_pos);
-        // System.out.println("closest point index:" + index);
         Vector2 lookahead = null;
         counter++;
         int inner_counter = 1;
@@ -84,11 +77,6 @@ public class PathFollower {
     }
 
     private double calculateCurvature(Vector2 robot_pos, Vector2 look_ahead, double robot_angle) {
-        // calculate curvature
-        //double a = -1 / Math.max(Math.tan(robot_angle), Constants.EPSILON);
-        //double b = -1;
-        //double c = robot_pos.x / Math.max(Math.tan(robot_angle), Constants.EPSILON) + robot_pos.y;
-
         double a = -Math.tan(robot_angle);
         double b = 1;
         double c = Math.tan(robot_angle) * robot_pos.x - robot_pos.y;

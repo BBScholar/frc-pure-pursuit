@@ -57,7 +57,7 @@ public class PathFollower {
 
         if(lookahead == null) {
             lookahead = m_path.getPoint(m_path.getPathLength() - 1);
-            System.out.println("Using Last Lookahead: " + lookahead);
+            // System.out.println("Using Last Lookahead: " + lookahead);
         } else {
             double distance_between_robot_end = Vector2.distanceBetween(robot_pos, m_path.getPoint(m_path.getPathLength() - 1));
             if (distance_between_robot_end < Constants.LOOK_AHEAD_DISTANCE) {
@@ -67,17 +67,17 @@ public class PathFollower {
             Vector2 robot_to_lookahead = Vector2.subtract(lookahead, robot_pos);
             Vector2 robot_direction = Vector2.representHeadingWithUnitVector(-Math.toDegrees(robot_angle) + 90);
             double angle_to_lookahead = Math.abs(Vector2.angleBetween(robot_to_lookahead, robot_direction));
-            System.out.println(angle_to_lookahead);
+            // System.out.println(angle_to_lookahead);
         }
         return lookahead;
     }
 
     private double calculateCurvature(Vector2 robot_pos, Vector2 look_ahead, double robot_angle) {
-        double a = -Math.tan(robot_angle);
-        double b = 1;
-        double c = Math.tan(robot_angle) * robot_pos.x - robot_pos.y;
+        double a = (1 / Math.tan(robot_angle));
+        double b = -1;
+        double c = -(1 / Math.tan(robot_angle)) * robot_pos.y + robot_pos.x;
 
-        double x = Math.abs(a * look_ahead.x + b * look_ahead.y + c) / (Math.sqrt(a * a + b * b));
+        double x = Math.abs(a * look_ahead.y + b * look_ahead.x + c) / (Math.sqrt(a * a + b * b));
         double curvature = (2.0 * x) / (Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2));
 
         double side = Math.signum(Math.sin(robot_angle) * (look_ahead.x - robot_pos.x) - Math.cos(robot_angle) * (look_ahead.y - robot_pos.y));

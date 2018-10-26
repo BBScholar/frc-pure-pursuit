@@ -40,10 +40,9 @@ public class PurePursuitTests {
     }
 
     @Test
-    public void testPathFollower() {
+    public void testPath() {
         Path path = new Path("src/test/java/tests/path.csv");
-        PathFollower follower = new PathFollower(path);
-        
+        System.out.println(path.findClosestPointIndex(new Vector2(-23, 77), 0));
     }
 
 }

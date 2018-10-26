@@ -83,6 +83,15 @@ public class Path {
         return index;
     }
 
+    @Override
+    public String toString() {
+        String tmp = "";
+        for(Vector2 i : coordinates) {
+            tmp += i.toString() + "\n";
+        }
+        return tmp;
+    }
+
     public int getPathLength() {
         return coordinates.length;
     }

@@ -166,7 +166,7 @@ public class Vector2 {
 	 * @return The unit direction vector
 	 */
 	public static Vector2 unitDirectionVector(Vector2 vector) {
-		return Vector2.multiply(vector, 1 / Vector2.dot(vector, vector));
+		return Vector2.multiply(vector, 1 / vector.getMagnitude());
 	}
 
 	@Override

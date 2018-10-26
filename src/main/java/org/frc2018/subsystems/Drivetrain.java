@@ -14,9 +14,7 @@ import com.ctre.phoenix.ParamEnum;
 
 import org.frc2018.Constants;
 import org.frc2018.Utils;
-import org.frc2018.path.Vector2;
-import org.frc2018.path.Path;
-import org.frc2018.path.PathFollower;
+import org.frc2018.Vector2;
 
 public class Drivetrain extends Subsystem {
 
@@ -36,8 +34,6 @@ public class Drivetrain extends Subsystem {
 
     private DriveMode m_mode;
 
-    private double m_target_heading;
-    private double m_target_distance;
     private boolean m_is_brakemode;
 
     private Drivetrain() {
@@ -65,9 +61,6 @@ public class Drivetrain extends Subsystem {
 
         configureForPercent();
 
-        m_target_heading = 0;
-        m_target_distance = 0;
-
         m_is_brakemode = false;
         setBrakeMode(false);
 
@@ -76,7 +69,7 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void update() {
-        
+        Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
     }
 
     /**
@@ -293,7 +286,7 @@ public class Drivetrain extends Subsystem {
      * @return
      */
     private int getRightDistanceRaw() {
-        return m_right_master.getSelectedSensorPosition(0);
+        return m_right_master.getSensorCollection().getQuadraturePosition();
     }
 
     /**
@@ -309,7 +302,7 @@ public class Drivetrain extends Subsystem {
      * @return velocity of right side of drivetrain in encoder ticks per 100 milli-seconds
      */
     private int getRightVelocityRaw() {
-        return m_right_master.getSelectedSensorVelocity(0);
+        return m_right_master.getSensorCollection().getQuadratureVelocity();
     }
 
     /**
@@ -333,7 +326,7 @@ public class Drivetrain extends Subsystem {
      * @param ticks right encoder distance to set in encoder ticks
      */
     private void setRightDistanceRaw(int ticks) {
-        m_right_master.setSelectedSensorPosition(-ticks, 0, 0);
+        m_right_master.getSensorCollection().setQuadraturePosition(-ticks, 0);
     }
 
     /**
@@ -607,15 +600,56 @@ public class Drivetrain extends Subsystem {
 
 class Position {
 
+    private double x, y;
+    private double last_left, last_right;
+    private double last_angle;
 
+    private Position() {
+        x = 0;
+        y = 0;
+        
+        last_left = 0;
+        last_right = 0;
+        last_angle = 0;
+    }
+
+    public void update(double left_distance, double right_distance, double angle) {
+        angle = Math.toRadians(angle);
+        double angle_delta = angle - last_angle;
+        if(angle_delta == 0) angle_delta = Constants.EPSILON;
+        double left_delta = left_distance - last_left;
+        double right_delta = right_distance - last_right;
+        double distance = (left_delta + right_delta) / 2.0;
+        double radius_of_curvature = distance / angle_delta;
+        double delta_y = radius_of_curvature * Math.sin(angle_delta);
+        double delta_x = radius_of_curvature * (Math.cos(angle_delta) - 1);
+        y += delta_x * Math.cos(last_angle) - delta_y * Math.sin(last_angle);
+        x +=  delta_x * Math.sin(last_angle) + delta_y * Math.cos(last_angle);
+        last_left = left_distance;
+        last_right = right_distance;
+        last_angle = angle;
+    }
+
+    public Vector2 getPositionVector() {
+        return new Vector2(x, y);
+    }
+
+    public void reset() {
+        x = 0;
+        y = 0;
+        last_left = 0;
+        last_right = 0;
+        last_angle = 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Robot Position: X: %.2f, Y:%.2f ", x, y);
+    }
 
     private static Position _instance = new Position();
 
     public static Position getInstance() {
         return _instance;
-    }
-
-    public void reset() {
-
     }
 }

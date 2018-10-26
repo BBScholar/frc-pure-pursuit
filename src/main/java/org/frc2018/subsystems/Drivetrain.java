@@ -169,27 +169,11 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Get the current left position error
-     * @return the current position error in inches
-     */
-    public double getLeftPositionError() {
-        return Utils.encoderTicksToInches(m_left_master.getClosedLoopError(0));
-    }
-
-    /**
-     * Get the current right position error
-     * @return the current position error in inches
-     */
-    public double getRightPositionError() {
-        return Utils.encoderTicksToInches(m_right_master.getClosedLoopError(0));
-    }
-
-    /**
      * Get the current average position error
      * @return the current position error in inches
      */
-    public double getAveragePositionError() {
-        return Utils.encoderTicksToInches(m_left_master.getClosedLoopError(0) + m_right_master.getClosedLoopError(0)) / 2;
+    public double getPositionError() {
+        return Utils.encoderTicksToInches(m_right_master.getClosedLoopError(0));
     }
 
     /**
@@ -197,7 +181,7 @@ public class Drivetrain extends Subsystem {
      * @return the current angle error in degrees
      */
     public double getAnglePositionError() {
-        return Utils.talonAngleToDegrees(m_left_master.getClosedLoopError(1));
+        return Utils.talonAngleToDegrees(m_right_master.getClosedLoopError(1));
     }
 
     /**
@@ -433,6 +417,9 @@ public class Drivetrain extends Subsystem {
         m_left_master.follow(m_right_master, FollowerType.AuxOutput1);
         m_left_master.setInverted(false);
 
+        m_left_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(true);
+
         m_mode = DriveMode.POSITION_LOOP;
     }
 
@@ -488,6 +475,9 @@ public class Drivetrain extends Subsystem {
 
         m_left_master.follow(m_right_master, FollowerType.AuxOutput1);
         m_left_master.setInverted(true); // check this
+
+        m_left_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(false);
 
         m_mode = DriveMode.TURN_LOOP;
     }
@@ -552,6 +542,8 @@ public class Drivetrain extends Subsystem {
         m_left_master.selectProfileSlot(1, 1);
 
         m_left_master.setInverted(false); // check this
+        m_left_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(false);
 
         m_mode = DriveMode.VELOCITY_LOOP;
     }
@@ -566,6 +558,8 @@ public class Drivetrain extends Subsystem {
         m_left_master.configPeakOutputReverse(-1.0, 0);
         m_right_master.configPeakOutputForward(+1.0, 0);
         m_right_master.configPeakOutputReverse(-1.0, 0);
+        m_left_master.setSensorPhase(false);
+        m_right_master.setSensorPhase(false);
         m_mode = DriveMode.PERCENT_LOOP;
     }
     

@@ -38,7 +38,7 @@ public class Constants { // temp, in place of dashboard
 
     public static final int         TALON_UPDATE_PERIOD_MS      = 10;
     public static final int         TALON_PIDF_LOOP_PERIOD_MS   = 1;
-    public static final boolean     INVERT_ANGLE_AUX_PIDF       = false;
+    public static final boolean     INVERT_ANGLE_AUX_PIDF       = true;
     public static final boolean     INVERT_TURN_PIDF            = false;
     public static final boolean     INVERT_FIXED_AUX_PIDF       = false;
 
@@ -49,10 +49,10 @@ public class Constants { // temp, in place of dashboard
     // pid constants
     public static final double      CLOSED_LOOP_RAMP            = 0.0;
 
-    public static final double      VEL_kP                      = 3.5;
-    public static final double      VEL_kI                      = 0.0;
-    public static final double      VEL_kD                      = 0.5;
-    public static final double      VEL_kF                      = 0.15;
+    public static final double      VEL_kP                      = 3.8;
+    public static final double      VEL_kI                      = 0.001;
+    public static final double      VEL_kD                      = 0.8;
+    public static final double      VEL_kF                      = 0.18;
     public static final int         VEL_IZONE                   = 10;
     public static final double      VEL_MAX_OUTPUT              = 1.0;
 
@@ -63,7 +63,7 @@ public class Constants { // temp, in place of dashboard
     public static final double      POS_kF                      = 0.0;
     public static final int         POS_IZONE                   = 10;
     public static final double      POS_MAX_OUTPUT              = 0.5;
-    public static final double      ANGLE_kP                    = 0;
+    public static final double      ANGLE_kP                    = 2.0;
     public static final double      ANGLE_kI                    = 0;
     public static final double      ANGLE_kD                    = 0;
     public static final double      ANGLE_kF                    = 0;

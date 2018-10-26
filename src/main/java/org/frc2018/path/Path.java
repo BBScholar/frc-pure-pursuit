@@ -32,7 +32,8 @@ public class Path {
             while(line!=null) {
                 if(backwards) temp_coords.add(new Vector2(-Double.parseDouble(line[0]), -Double.parseDouble(line[1])));
                 else temp_coords.add(new Vector2(Double.parseDouble(line[0]), Double.parseDouble(line[1])));
-                temp_velo.add(Double.parseDouble(line[2]));
+                if(backwards) temp_velo.add(-Double.parseDouble(line[2]));
+                else temp_velo.add(Double.parseDouble(line[2]));
                 line = reader.readNext();
             }
             reader.close();

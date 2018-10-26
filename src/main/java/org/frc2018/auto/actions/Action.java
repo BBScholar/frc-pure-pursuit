@@ -25,10 +25,11 @@ public class Action {
         return _timeout.get() > _timeout_ms;
     }
 
-    public String next() {
+    public Routine.RoutineTag next() {
         return timedOut() ? Routine.CURRENT_ROUTINE : Routine.NOT_FINISHED;
     }
 
     public void finish() {}
 
+    public void reset() {}
 }

@@ -16,7 +16,7 @@ public class DrivePathAction extends Action {
     public DrivePathAction(Path path, double timeout_ms) {
         super(timeout_ms);
         m_path = path;
-        m_path_follower = new PathFollower(path);
+        m_path_follower = new PathFollower(m_path);
     }   
 
     @Override
@@ -34,7 +34,7 @@ public class DrivePathAction extends Action {
     }
 
     @Override
-    public String next() {
+    public Routine.RoutineTag next() {
         Vector2 relative_robot_pos = Vector2.subtract(Drivetrain.getInstance().getRobotPosition(), init_position);
         return (super.timedOut() || m_path_follower.doneWithPath(relative_robot_pos)) ? Routine.CURRENT_ROUTINE : Routine.NOT_FINISHED;
     }

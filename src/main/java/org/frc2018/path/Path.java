@@ -81,4 +81,8 @@ public class Path {
         }
         return index;
     }
+
+    public int getPathLength() {
+        return coordinates.length;
+    }
 }

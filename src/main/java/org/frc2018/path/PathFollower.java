@@ -84,9 +84,12 @@ public class PathFollower {
         return curvature * side;
     }
 
-    // public double getTargetVelocity(Vector2 robot_pos) {
-
-    // }
+    public double getTargetVelocity(Vector2 robot_pos) {
+        int second_point_index = m_path.findNextClosestPointIndex(point, closest_index)
+        m_path.getPoint(m_last_closest_point_index);
+        m_path.getPointVelocity(m_last_closest_point_index);
+        m_path.
+    }
 
     public double[] update(Vector2 robot_pos, double robot_angle) {
         double[] output = new double[2];

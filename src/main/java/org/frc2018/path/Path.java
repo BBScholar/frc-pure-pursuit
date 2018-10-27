@@ -83,6 +83,23 @@ public class Path {
         return index;
     }
 
+    public int findNextClosestPointIndex(Vector2 point, int closest_index) {
+        // edge case
+        if(closest_index == 0) {
+            return 1;
+        }
+        if(closest_index == getPathLength() - 1) {
+            return getPathLength() - 1;
+        }
+        double previous_point_distance = Vector2.distanceBetween(point, getPoint(closest_index - 1));
+        double next_point_distance = Vector2.distanceBetween(point, getPoint(closest_index + 1));
+        if(previous_point_distance < next_point_distance) {
+            return closest_index - 1;
+        } else {
+            return closest_index + 1;
+        }
+    }
+
     @Override
     public String toString() {
         String tmp = "";

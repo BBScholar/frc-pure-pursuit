@@ -13,10 +13,13 @@ public class DrivePathAction extends Action {
     private Vector2 init_position;
     private double init_angle;
 
+    private boolean first_run;
+
     public DrivePathAction(Path path, double timeout_ms) {
         super(timeout_ms);
         m_path = path;
         m_path_follower = new PathFollower(m_path);
+        first_run = true;
     }   
 
     @Override
@@ -25,6 +28,8 @@ public class DrivePathAction extends Action {
         init_position = Drivetrain.getInstance().getRobotPosition();
         init_angle = Drivetrain.getInstance().getGyroAngle();
         Drivetrain.getInstance().setBrakeMode(true);
+        System.out.println(m_path);
+        Drivetrain.getInstance().setVelocity(10, 10);
     }
 
     @Override
@@ -32,11 +37,13 @@ public class DrivePathAction extends Action {
         Vector2 relative_robot_pos = Vector2.subtract(Drivetrain.getInstance().getRobotPosition(), init_position);
         double[] velocities = m_path_follower.update(relative_robot_pos, Drivetrain.getInstance().getGyroAngle() - init_angle);
         Drivetrain.getInstance().setVelocity(velocities[0], velocities[1]);
+
+        // print velocity errors
+        System.out.println("velocity error: " + Drivetrain.getInstance().getAverageVelocityError() + " velocity setpoints: [" + velocities[0] + "," + velocities[1] + "]");
     }
 
     @Override
     public boolean next() {
-        System.out.println("Timed out: " + super.timedOut());
         Vector2 relative_robot_pos = Vector2.subtract(Drivetrain.getInstance().getRobotPosition(), init_position);
         return (super.timedOut() || m_path_follower.doneWithPath(relative_robot_pos)) ? true : false;
     }
@@ -49,6 +56,7 @@ public class DrivePathAction extends Action {
     @Override
     public void reset() {
         super.reset();
+        first_run = true;
     }
 
 }

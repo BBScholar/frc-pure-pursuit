@@ -49,10 +49,10 @@ public class Constants { // temp, in place of dashboard
     // pid constants
     public static final double      CLOSED_LOOP_RAMP            = 0.0;
 
-    public static final double      VEL_kP                      = 3.8;
-    public static final double      VEL_kI                      = 0.001;
-    public static final double      VEL_kD                      = 0.8;
-    public static final double      VEL_kF                      = 0.18;
+    public static final double      VEL_kP                      = 2.5;
+    public static final double      VEL_kI                      = 0.0;
+    public static final double      VEL_kD                      = 1.0;
+    public static final double      VEL_kF                      = 0.95;
     public static final int         VEL_IZONE                   = 10;
     public static final double      VEL_MAX_OUTPUT              = 1.0;
 

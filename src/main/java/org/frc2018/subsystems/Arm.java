@@ -65,6 +65,7 @@ public class Arm extends Subsystem {
     }
 
     public void stopArm() {
+        System.out.println("stop");
         m_arm.set(ControlMode.PercentOutput, 0);
     }
 

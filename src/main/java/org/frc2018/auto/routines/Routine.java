@@ -39,7 +39,6 @@ public class Routine {
     public boolean advanceRoutine() {
         if(isLastStep()) return false;
         m_step_number++;
-        System.out.println("Step number: " + m_step_number);
         return true;
     }
 

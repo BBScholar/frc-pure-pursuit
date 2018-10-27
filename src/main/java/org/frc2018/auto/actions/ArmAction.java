@@ -60,7 +60,7 @@ public class ArmAction extends Action {
             case SPIT:
                 Arm.getInstance().spit();
             case NONE:
-                Arm.getInstance().stopIntake();
+                // Arm.getInstance().stopIntake();
         }
     }
 
@@ -71,6 +71,7 @@ public class ArmAction extends Action {
 
     @Override
     public void finish() {
+        System.out.println("finish arm");
         Arm.getInstance().stop();
     }
 

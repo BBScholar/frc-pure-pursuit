@@ -21,9 +21,9 @@ public class AutoController extends Controller {
     private boolean is_finished;
 
     private AutoController() {
-        left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 6));
+        left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
         left_one_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
-        right_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_right.csv", true), 6));
+        right_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_right.csv", true), 10));
         right_one_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
 
         is_finished = false;
@@ -31,9 +31,11 @@ public class AutoController extends Controller {
 
     @Override
     public void init() {
-        if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1) == "L") {
+        if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L")) {
             current_routine = left_one_cube;
+            System.out.println("choosing left");
         } else {
+            System.out.println("choosing riught");
             current_routine = right_one_cube;
         }
         current_action = current_routine.getCurrentAction();
@@ -45,20 +47,8 @@ public class AutoController extends Controller {
         if(is_finished) {
             return;
         }
-<<<<<<< HEAD
-        System.out.println(current_action.next() + ":" + current_routine.getActionIndex());
-        if(current_action.next() == Routine.NOT_FINISHED) {
-            current_action.update();
-        } else {
-            current_action.finish();
-            if(!current_routine.advanceRoutine()) {
-                System.out.println("Finished");
-                is_finished = true;
-                return;
-            }
-            System.out.println("Not finished");
-=======
         if(current_routine.isLastStep() && current_action.next()) {
+            current_action.finish();
             return;
         }
         if(current_action == null){ 
@@ -68,7 +58,6 @@ public class AutoController extends Controller {
             System.out.println("Advancing routine");
             current_action.finish();
             current_routine.advanceRoutine();
->>>>>>> 821578303facf969ec5cf9c17ad1a17a1cd5f173
             current_action = current_routine.getCurrentAction();
             current_action.start();
         } else {

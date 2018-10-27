@@ -37,6 +37,7 @@ public class AutoController extends Controller {
             current_routine = right_one_cube;
         }
         current_action = current_routine.getCurrentAction();
+        current_action.start();
     }
 
     @Override

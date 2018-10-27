@@ -30,17 +30,11 @@ public class DriveStraightAction extends Action {
     }
 
     @Override
-    protected boolean timedOut() {
-        return super.timedOut();
-    }
-
-    @Override
-    public RoutineTag next() {
-        if(timedOut()) return Routine.CURRENT_ROUTINE;
-        if(Math.abs(Drivetrain.getInstance().getPositionError()) < 2.0) {
-            return Routine.CURRENT_ROUTINE;
+    public boolean next() {
+        if(super.timedOut() || Math.abs(Drivetrain.getInstance().getPositionError()) < 2.0) {
+            return true;
         }
-        return Routine.NOT_FINISHED;
+        return false;
     }
 
     @Override

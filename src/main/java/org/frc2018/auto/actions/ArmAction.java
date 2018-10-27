@@ -31,6 +31,7 @@ public class ArmAction extends Action {
 
     @Override
     public void start() {
+        super.start();
     }
 
     @Override
@@ -64,10 +65,17 @@ public class ArmAction extends Action {
     }
 
     @Override
+    public boolean next() {
+        return super.next();
+    }
+
+    @Override
     public void finish() {
         Arm.getInstance().stop();
     }
 
     @Override
-    public void reset() {}
+    public void reset() {
+        super.reset();
+    }
 }

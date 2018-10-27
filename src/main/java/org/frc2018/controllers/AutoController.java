@@ -45,6 +45,7 @@ public class AutoController extends Controller {
         if(is_finished) {
             return;
         }
+<<<<<<< HEAD
         System.out.println(current_action.next() + ":" + current_routine.getActionIndex());
         if(current_action.next() == Routine.NOT_FINISHED) {
             current_action.update();
@@ -56,8 +57,22 @@ public class AutoController extends Controller {
                 return;
             }
             System.out.println("Not finished");
+=======
+        if(current_routine.isLastStep() && current_action.next()) {
+            return;
+        }
+        if(current_action == null){ 
             current_action = current_routine.getCurrentAction();
             current_action.start();
+        } else if(current_action.next()) {
+            System.out.println("Advancing routine");
+            current_action.finish();
+            current_routine.advanceRoutine();
+>>>>>>> 821578303facf969ec5cf9c17ad1a17a1cd5f173
+            current_action = current_routine.getCurrentAction();
+            current_action.start();
+        } else {
+            current_action.update();
         }
     }
 

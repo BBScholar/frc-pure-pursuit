@@ -26,6 +26,7 @@ public class TurnAction extends Action {
 
     @Override
     public void start() {
+        super.start();
         Drivetrain.getInstance().setTurn(m_angle);
     }
 
@@ -34,21 +35,19 @@ public class TurnAction extends Action {
         super.update();
     }
 
-    @Override
-    protected boolean timedOut() {
-        return super.timedOut();
-    }
 
     @Override
-    public RoutineTag next() {
-        if(timedOut()) return Routine.CURRENT_ROUTINE;
-        if(Math.abs(Drivetrain.getInstance().getTurnError()) < 3.0) {
-            return Routine.CURRENT_ROUTINE;
+    public boolean next() {
+        if(super.timedOut() || Math.abs(Drivetrain.getInstance().getTurnError()) < 3.0) {
+            return true;
         }
-        return Routine.NOT_FINISHED;
+        return false;
     }
 
-
+    @Override
+    public void reset() {
+        super.reset();
+    }
 
 
 }

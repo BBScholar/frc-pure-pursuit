@@ -10,6 +10,7 @@ import org.frc2018.auto.actions.ArmAction.ArmDirection;
 import org.frc2018.auto.actions.ArmAction.IntakeDirection;
 import org.frc2018.auto.routines.Routine;
 import org.frc2018.path.Path;
+import org.frc2018.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -25,6 +26,15 @@ public class AutoController extends Controller {
     private Action current_action;
 
     private boolean is_finished;
+
+    public enum AutoMode {
+        LEFT,
+        CENTER,
+        RIGHT,
+        BASELINE
+    }
+
+    private AutoMode m_mode;
 
     private AutoController() {
         left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
@@ -51,10 +61,12 @@ public class AutoController extends Controller {
         left_outer_one_cube.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
         is_finished = false;
+        m_mode = AutoMode.CENTER;
     }
 
     @Override
     public void init() {
+        Drivetrain.getInstance().reset();
         if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L")) {
             current_routine = left_one_cube;
         } else {
@@ -84,6 +96,14 @@ public class AutoController extends Controller {
         } else {
             current_action.update();
         }
+    }
+
+    public void reset() {
+        baseline.reset();
+        left_one_cube.reset();
+        right_one_cube.reset();
+        left_outer_one_cube.reset();
+        right_outer_one_cube.reset();
     }
 
     private static AutoController _instance = new AutoController();

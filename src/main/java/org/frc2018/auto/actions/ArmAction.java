@@ -38,13 +38,15 @@ public class ArmAction extends Action {
 
         switch(arm_direction) {
             case UP:
-                Arm.getInstance().setArm(speed);
-
-        }
-        if(arm_direction == ArmDirection.UP) {
-            Arm.getInstance().setArm(1.0);
-        } else {
-            Arm.getInstance().setArm(-1.0);
+                Arm.getInstance().setArm(1.0);
+            case DOWN:
+                Arm.getInstance().setArm(-1.0);
+            case HOLD_UP:
+                Arm.getInstance().setArm(0.2);
+            case HOLD_DOWN:
+                Arm.getInstance().setArm(-0.2);
+            case NONE:
+                Arm.getInstance().stopArm();
         }
 
         switch(intake_direction) {

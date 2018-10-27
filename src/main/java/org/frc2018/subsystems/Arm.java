@@ -64,6 +64,10 @@ public class Arm extends Subsystem {
         m_arm.set(ControlMode.PercentOutput, speed);
     }
 
+    public void stopArm() {
+        m_arm.set(ControlMode.PercentOutput, 0);
+    }
+
     @Override
     public void stop() {
         setArm(0);

@@ -1,31 +1,59 @@
 package org.frc2018.controllers;
 
+import org.frc2018.auto.actions.Action;
+import org.frc2018.auto.actions.ArmAction;
 import org.frc2018.auto.actions.DrivePathAction;
+import org.frc2018.auto.actions.ArmAction.ArmDirection;
+import org.frc2018.auto.actions.ArmAction.IntakeDirection;
 import org.frc2018.auto.routines.Routine;
 import org.frc2018.path.Path;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class AutoController extends Controller {
 
-    private DrivePathAction drive_action;
+    private Routine left_one_cube = new Routine("left_one_cube");
+    private Routine right_one_cube = new Routine("right_one_cube");
+
+    private Routine current_routine;
+    private Action current_action;
+
+    private boolean is_finished;
 
     private AutoController() {
+        left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 6));
+        left_one_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+        right_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_right.csv", true), 6));
+        right_one_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
 
+        is_finished = false;
     }
 
     @Override
     public void init() {
-        Path path = new Path("/home/lvuser/paths/path.csv", true);
-        System.out.println(path);
-        drive_action = new DrivePathAction(path, 1000);
-        drive_action.start();
+        if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1) == "L") {
+            current_routine = left_one_cube;
+        } else {
+            current_routine = right_one_cube;
+        }
+        current_action = current_routine.getCurrentAction();
     }
 
     @Override
     public void handle() {
-        if(drive_action.next() == Routine.NOT_FINISHED) {
-            drive_action.update();
+        if(is_finished) {
+            return;
+        }
+        if(current_action.next() == Routine.NOT_FINISHED) {
+            current_action.update();
         } else {
-            drive_action.finish();
+            current_action.finish();
+            if(!current_routine.advanceRoutine()) {
+                is_finished = true;
+                return;
+            }
+            current_action = current_routine.getCurrentAction();
+            current_action.start();
         }
     }
 

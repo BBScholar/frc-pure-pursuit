@@ -32,8 +32,10 @@ public class Routine {
         return m_actions.get(m_step_number);
     }
 
-    public void advanceRoutine() {
+    public boolean advanceRoutine() {
+        if(isLastStep()) return false;
         m_step_number++;
+        return true;
     }
 
     public void setActionIndex(int index) {
@@ -47,8 +49,8 @@ public class Routine {
         m_step_number = 0;
     }
 
-    public boolean isFinished() {
-        return m_step_number >= m_actions.size() - 1 && getCurrentAction().next() != NOT_FINISHED;
+    private boolean isLastStep() {
+        return m_step_number >= m_actions.size() - 1;
     }
 
     public static class RoutineTag {

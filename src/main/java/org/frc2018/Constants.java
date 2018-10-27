@@ -33,7 +33,7 @@ public class Constants { // temp, in place of dashboard
     public static final boolean     INVERT_INTAKE               = false;
     public static final double      INTAKE_SPEED                = -0.7;
     public static final double      INTAKE_HOLD_SPEED           = -0.3;
-    public static final double      INTAKE_SPIT_SPEED           = 1.0;
+    public static final double      INTAKE_SPIT_SPEED           = 0.8;
     public static final double      INTAKE_DROP_SPEED           = 0.3;
 
     public static final int         TALON_UPDATE_PERIOD_MS      = 10;

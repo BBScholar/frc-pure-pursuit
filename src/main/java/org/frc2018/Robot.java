@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         AutoController.getInstance().handle();
+        System.out.println("Angle: " + Drivetrain.getInstance().getGyroAngle() + " Left Distance: " + Drivetrain.getInstance().getLeftDistanceInches() + " Right Distance: " + Drivetrain.getInstance().getRightDistanceInches() + " Position: " + Drivetrain.getInstance().getRobotPosition());
     }
 
     @Override

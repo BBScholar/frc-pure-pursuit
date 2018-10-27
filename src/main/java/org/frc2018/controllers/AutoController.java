@@ -33,9 +33,7 @@ public class AutoController extends Controller {
     public void init() {
         if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L")) {
             current_routine = left_one_cube;
-            System.out.println("choosing left");
         } else {
-            System.out.println("choosing riught");
             current_routine = right_one_cube;
         }
         current_action = current_routine.getCurrentAction();
@@ -55,7 +53,6 @@ public class AutoController extends Controller {
             current_action = current_routine.getCurrentAction();
             current_action.start();
         } else if(current_action.next()) {
-            System.out.println("Advancing routine");
             current_action.finish();
             current_routine.advanceRoutine();
             current_action = current_routine.getCurrentAction();

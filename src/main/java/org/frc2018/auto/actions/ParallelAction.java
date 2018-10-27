@@ -1,15 +1,16 @@
 package org.frc2018.auto.actions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.frc2018.auto.routines.Routine;
 import org.frc2018.auto.routines.Routine.RoutineTag;
 
 public class ParallelAction extends Action {
 
-    private final ArrayList<Action> mActions;
+    private final List<Action> mActions;
 
-    public ParallelAction(double timeout, ArrayList<Action> actions) {
+    public ParallelAction(double timeout, List<Action> actions) {
         super(timeout);
         mActions = actions;
     }

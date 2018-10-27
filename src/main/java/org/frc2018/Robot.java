@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     }
 
     private boolean auto_rotate = false;
+    private boolean cube_rotate = false;
     
 
     @Override
@@ -43,6 +44,14 @@ public class Robot extends TimedRobot {
         } else if(!TeleopController.getInstance().getRotateAuto()){
             auto_rotate = false;
         }
+
+        if(!cube_rotate && TeleopController.getInstance().getRotateCube()) {
+            AutoController.getInstance().rotateCube();
+            cube_rotate = true;
+        } else if(!TeleopController.getInstance().getRotateCube()) {
+            cube_rotate = false;
+        }
+
     }
 
     @Override

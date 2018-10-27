@@ -1,10 +1,13 @@
 package org.frc2018.controllers;
 
+import java.util.Arrays;
+
 import org.frc2018.auto.actions.Action;
 import org.frc2018.auto.actions.ArmAction;
 import org.frc2018.auto.actions.DrivePathAction;
 import org.frc2018.auto.actions.DriveStraightAction;
 import org.frc2018.auto.actions.NothingAction;
+import org.frc2018.auto.actions.ParallelAction;
 import org.frc2018.auto.actions.TurnAction;
 import org.frc2018.auto.actions.ArmAction.ArmDirection;
 import org.frc2018.auto.actions.ArmAction.IntakeDirection;
@@ -18,7 +21,11 @@ public class AutoController extends Controller {
 
     private Routine left_one_cube = new Routine("left_one_cube");
     private Routine right_one_cube = new Routine("right_one_cube");
+    private Routine left_two_cube = new Routine("left_two_cube");
+    private Routine right_two_cube = new Routine("right_two_cube");
+
     private Routine baseline = new Routine("baseline");
+
     private Routine left_outer_one_cube = new Routine("left_outer_one_cube");
     private Routine right_outer_one_cube = new Routine("right_outer_one_cube");
 
@@ -34,7 +41,13 @@ public class AutoController extends Controller {
         BASELINE
     }
 
+    public enum CubeMode {
+        ONE,
+        TWO
+    }
+
     private AutoMode m_mode;
+    private CubeMode m_cube_mode;
 
     private AutoController() {
         left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
@@ -42,6 +55,34 @@ public class AutoController extends Controller {
         
         right_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_right.csv", true), 10));
         right_one_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+
+        left_two_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
+        left_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+        left_two_cube.addAction(new ArmAction(ArmDirection.DOWN, IntakeDirection.NONE, 0.5));
+        left_two_cube.addAction(new ParallelAction(5, Arrays.asList(
+            new DrivePathAction(new Path("home/lvuser/paths/left_to_pyramid.csv", false) , 5),
+            new ArmAction(ArmDirection.NONE, IntakeDirection.INTAKE, 5)
+        ))); // arm down, drive path to pyramid, intake
+        left_two_cube.addAction(new ParallelAction(5, Arrays.asList(
+            new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.HOLD, 2),
+            new DrivePathAction(new Path("home/lvuser/paths/pyramid_to_left.csv", true), 5)
+        ))); // arm up, drive back to switch
+        left_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+        //outtake
+
+        right_two_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_right.csv", true), 10));
+        right_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+        right_two_cube.addAction(new ArmAction(ArmDirection.DOWN, IntakeDirection.NONE, 0.5));
+        right_two_cube.addAction(new ParallelAction(5, Arrays.asList(
+            new DrivePathAction(new Path("home/lvuser/paths/right_to_pyramind.csv", false) , 5),
+            new ArmAction(ArmDirection.NONE, IntakeDirection.INTAKE, 5)
+        ))); // arm down, drive path to pyramid, intake
+        right_two_cube.addAction(new ParallelAction(5, Arrays.asList(
+            new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.HOLD, 2),
+            new DrivePathAction(new Path("home/lvuser/paths/pyramid_to_right.csv", true), 5)
+        ))); // arm up, drive back to switch
+        right_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
+
 
         baseline.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.2));
         baseline.addAction(new DriveStraightAction(3, -106));
@@ -62,7 +103,9 @@ public class AutoController extends Controller {
 
         is_finished = false;
         m_mode = AutoMode.CENTER;
+        m_cube_mode = CubeMode.ONE;
         System.out.println("AUTO MODE: Selected Center Auto!");
+        System.out.println("CUBE MODE: One Cube!");
     }
 
     public void rotateAuto() {
@@ -90,6 +133,19 @@ public class AutoController extends Controller {
         }
     }
 
+    public void rotateCube() {
+        switch(m_cube_mode) {
+            case ONE:
+                System.out.println("CUBE MODE: Two Cube!");
+                m_cube_mode = CubeMode.TWO;
+                break;
+            case TWO:
+                System.out.println("CUBE MODE: One Cube!");
+                m_cube_mode = CubeMode.ONE;
+                break;
+        }
+    }
+
     @Override
     public void init() {
         Drivetrain.getInstance().reset();
@@ -97,9 +153,18 @@ public class AutoController extends Controller {
         switch(m_mode) {
             case CENTER:
                 if(is_left) {
-                    current_routine = left_one_cube;
+                    if(m_cube_mode == CubeMode.ONE) {
+                        current_routine = left_one_cube;
+                    } else {
+                        current_routine = left_two_cube;
+                    }
+
                 } else {
-                    current_routine = right_one_cube;
+                    if(m_cube_mode == CubeMode.ONE) {
+                        current_routine = right_one_cube;
+                    } else {
+                        current_routine = right_two_cube;
+                    }
                 }
                 break;
             case LEFT:

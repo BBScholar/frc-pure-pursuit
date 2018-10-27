@@ -47,6 +47,10 @@ public class TeleopController extends Controller {
         return codriver.getXButton();
     }
 
+    public boolean getRotateCube() {
+        return codriver.getAButton();
+    }
+
     @Override
     public void reset() {
     }

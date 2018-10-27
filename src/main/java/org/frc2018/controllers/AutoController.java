@@ -208,6 +208,8 @@ public class AutoController extends Controller {
         right_one_cube.reset();
         left_outer_one_cube.reset();
         right_outer_one_cube.reset();
+        left_two_cube.reset();
+        right_two_cube.reset();
     }
 
     private static AutoController _instance = new AutoController();

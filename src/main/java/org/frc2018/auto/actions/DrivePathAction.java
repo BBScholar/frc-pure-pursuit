@@ -48,6 +48,7 @@ public class DrivePathAction extends Action {
 
     @Override
     public void reset() {
+        m_path_follower.reset();
         super.reset();
     }
 

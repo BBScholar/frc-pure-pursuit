@@ -105,4 +105,9 @@ public class PathFollower {
         return distance_between_robot_end < Constants.LOOK_AHEAD_DISTANCE;
     }
 
+
+    public void reset() {
+        m_last_closest_point_index = 0;
+    }
+
 }

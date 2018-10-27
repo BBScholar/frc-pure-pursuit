@@ -32,6 +32,10 @@ public class Routine {
         return m_actions.get(m_step_number);
     }
 
+    public int getActionIndex() {
+        return m_step_number;
+    }
+
     public boolean advanceRoutine() {
         if(isLastStep()) return false;
         m_step_number++;

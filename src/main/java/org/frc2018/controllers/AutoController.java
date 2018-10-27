@@ -45,14 +45,17 @@ public class AutoController extends Controller {
         if(is_finished) {
             return;
         }
+        System.out.println(current_action.next() + ":" + current_routine.getActionIndex());
         if(current_action.next() == Routine.NOT_FINISHED) {
             current_action.update();
         } else {
             current_action.finish();
             if(!current_routine.advanceRoutine()) {
+                System.out.println("Finished");
                 is_finished = true;
                 return;
             }
+            System.out.println("Not finished");
             current_action = current_routine.getCurrentAction();
             current_action.start();
         }

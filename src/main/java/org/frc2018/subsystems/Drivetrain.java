@@ -587,6 +587,7 @@ public class Drivetrain extends Subsystem {
         setRightDistanceInches(0);
         m_gyro.setYaw(0.0, 0);
         Position.getInstance().reset();
+        setBrakeMode(false);
     }
 
     @Override

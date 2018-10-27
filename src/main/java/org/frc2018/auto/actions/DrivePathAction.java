@@ -1,7 +1,6 @@
 package org.frc2018.auto.actions;
 
 import org.frc2018.Vector2;
-import org.frc2018.auto.routines.Routine;
 import org.frc2018.path.Path;
 import org.frc2018.path.PathFollower;
 import org.frc2018.subsystems.Drivetrain;

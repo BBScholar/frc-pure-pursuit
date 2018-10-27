@@ -84,6 +84,10 @@ public class PathFollower {
         return curvature * side;
     }
 
+    // public double getTargetVelocity(Vector2 robot_pos) {
+
+    // }
+
     public double[] update(Vector2 robot_pos, double robot_angle) {
         double[] output = new double[2];
         robot_angle = Math.toRadians(robot_angle);

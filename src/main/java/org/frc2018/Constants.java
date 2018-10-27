@@ -84,6 +84,6 @@ public class Constants { // temp, in place of dashboard
     public static final double      FIXED_MAX_OUTPUT            = 0.5;
 
 
-    public static final double LOOK_AHEAD_DISTANCE              = 24.0; // inches
+    public static final double LOOK_AHEAD_DISTANCE              = 12.0; // inches
 
 }

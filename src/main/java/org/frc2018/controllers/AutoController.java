@@ -62,16 +62,66 @@ public class AutoController extends Controller {
 
         is_finished = false;
         m_mode = AutoMode.CENTER;
+        System.out.println("AUTO MODE: Selected Center Auto!");
+    }
+
+    public void rotateAuto() {
+        switch(m_mode) {
+            case CENTER:
+                m_mode = AutoMode.RIGHT;
+                System.out.println("AUTO MODE: Selected Right Auto!");
+                break;
+            case RIGHT:
+                m_mode = AutoMode.LEFT;
+                System.out.println("AUTO MODE: Selected Left Auto!");
+                break;
+            case LEFT:
+                m_mode = AutoMode.BASELINE;
+                System.out.println("AUTO MODE: Selected Baseline Auto!");
+                break;
+            case BASELINE:
+                m_mode = AutoMode.CENTER;
+                System.out.println("AUTO MODE: Selected Center Auto!"); 
+                break;
+            default:
+                m_mode = AutoMode.BASELINE;
+                System.out.println("AUTO MODE: Enum Not Recognised. Baseline Selected!");
+                break;
+        }
     }
 
     @Override
     public void init() {
         Drivetrain.getInstance().reset();
-        if(DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L")) {
-            current_routine = left_one_cube;
-        } else {
-            current_routine = right_one_cube;
+        boolean is_left = DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L");
+        switch(m_mode) {
+            case CENTER:
+                if(is_left) {
+                    current_routine = left_one_cube;
+                } else {
+                    current_routine = right_one_cube;
+                }
+                break;
+            case LEFT:
+                if(is_left) {
+                    current_routine = left_outer_one_cube;
+                } else {
+                    current_routine = baseline;
+                }
+                break;
+            case RIGHT:
+                if(is_left) {
+                    current_routine = right_outer_one_cube;
+                } else {
+                    current_routine = baseline;
+                }
+                break;
+            case BASELINE:
+            default:
+                current_routine = baseline;
+                break;
         }
+
         current_action = current_routine.getCurrentAction();
         current_action.start();
     }

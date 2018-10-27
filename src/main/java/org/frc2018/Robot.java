@@ -15,7 +15,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        
+        AutoController.getInstance().reset();
     }
 
     @Override
@@ -32,8 +32,17 @@ public class Robot extends TimedRobot {
         Arm.getInstance().reset();
     }
 
+    private boolean auto_rotate = false;
+    
+
     @Override
     public void disabledPeriodic() {
+        if(!auto_rotate && TeleopController.getInstance().getRotateAuto()) {
+            AutoController.getInstance().rotateAuto();
+            auto_rotate = true;
+        } else if(!TeleopController.getInstance().getRotateAuto()){
+            auto_rotate = false;
+        }
     }
 
     @Override

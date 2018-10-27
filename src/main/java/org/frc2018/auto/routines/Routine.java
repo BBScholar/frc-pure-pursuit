@@ -35,6 +35,7 @@ public class Routine {
     public boolean advanceRoutine() {
         if(isLastStep()) return false;
         m_step_number++;
+        System.out.println("Step number: " + m_step_number);
         return true;
     }
 
@@ -49,7 +50,7 @@ public class Routine {
         m_step_number = 0;
     }
 
-    private boolean isLastStep() {
+    public boolean isLastStep() {
         return m_step_number >= m_actions.size() - 1;
     }
 

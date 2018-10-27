@@ -30,20 +30,16 @@ public class ParallelAction extends Action {
         }
     }
 
-    @Override
-    protected boolean timedOut() {
-        return super.timedOut();
-    }
 
     @Override
-    public Routine.RoutineTag next() {
-        if(timedOut()) return Routine.CURRENT_ROUTINE;
+    public boolean next() {
+        if(super.timedOut()) return true;
         for(Action a : mActions) {
-            if(a.next().equals(Routine.NOT_FINISHED)) {
-                return Routine.NOT_FINISHED;
+            if(!a.next()) {
+                return false;
             }
         }
-        return Routine.CURRENT_ROUTINE;
+        return true;
     }
 
     @Override

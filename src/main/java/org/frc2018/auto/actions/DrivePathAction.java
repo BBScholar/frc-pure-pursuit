@@ -21,6 +21,7 @@ public class DrivePathAction extends Action {
 
     @Override
     public void start() {
+        super.start();
         init_position = Drivetrain.getInstance().getRobotPosition();
         init_angle = Drivetrain.getInstance().getGyroAngle();
         Drivetrain.getInstance().setBrakeMode(true);
@@ -34,14 +35,20 @@ public class DrivePathAction extends Action {
     }
 
     @Override
-    public Routine.RoutineTag next() {
+    public boolean next() {
+        System.out.println("Timed out: " + super.timedOut());
         Vector2 relative_robot_pos = Vector2.subtract(Drivetrain.getInstance().getRobotPosition(), init_position);
-        return (super.timedOut() || m_path_follower.doneWithPath(relative_robot_pos)) ? Routine.CURRENT_ROUTINE : Routine.NOT_FINISHED;
+        return (super.timedOut() || m_path_follower.doneWithPath(relative_robot_pos)) ? true : false;
     }
 
     @Override
     public void finish() {
         Drivetrain.getInstance().stop();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
     }
 
 }

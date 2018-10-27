@@ -9,9 +9,9 @@ public class Action {
     private Timer _timeout;
     private double _timeout_ms;
 
-    protected Action(double timeout_ms) {
+    protected Action(double timeout_s) {
         _timeout = new Timer();
-        _timeout_ms = timeout_ms;
+        _timeout_ms = timeout_s;
     }
 
     public void start() {
@@ -22,14 +22,21 @@ public class Action {
     public void update() {}
 
     protected boolean timedOut() {
-        return _timeout.get() > _timeout_ms;
+        double t = _timeout.get();
+        boolean result = t >= _timeout_ms;
+        // System.out.println("Time: " + t + ", Timeout: " + _timeout_ms + ", Result: " + result);
+        return result;
     }
 
-    public Routine.RoutineTag next() {
-        return timedOut() ? Routine.CURRENT_ROUTINE : Routine.NOT_FINISHED;
+    public boolean next() {
+        return timedOut();
     }
 
     public void finish() {}
 
-    public void reset() {}
+    public void reset() {
+        _timeout.stop();
+        _timeout.reset();
+
+    }
 }

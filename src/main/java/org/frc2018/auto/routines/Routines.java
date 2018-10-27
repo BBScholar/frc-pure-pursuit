@@ -37,14 +37,18 @@ public class Routines {
         // ro_oc.addAction(new NothingCommand(7.0));
         ro_oc.addAction(new NothingAction(0.0));
         ro_oc.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.4));
-        ro_oc.addAction(new DriveCommand(3, false, -150));
-        ro_oc.addAction(new TurnCommand(2, false, 90));
-        ro_oc.addAction(new DriveCommand(1.5, false, -30));
-        ro_oc.addAction(new DriveSlowCommand(1, false, -10));
-        ro_oc.addAction(new ArmAction(0, true, ArmDirection.UP, 0.4));
-        ro_oc.addAction(new OuttakeDriveCommand(1, true, 0.6));
+        ro_oc.addAction(new DriveStraightAction(3, -150));
+        ro_oc.addAction(new TurnAction(2, 90));
+        ro_oc.addAction(new DriveStraightAction(1.5, -35));
+        ro_oc.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
-
+                // lo_oc.addAction(new NothingCommand(7.0));
+        lo_oc.addAction(new NothingAction(0.0));
+        lo_oc.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.4));
+        lo_oc.addAction(new DriveStraightAction(3, -150));
+        lo_oc.addAction(new TurnAction(1.5, -90));
+        lo_oc.addAction(new DriveStraightAction(1.5, -35));
+        lo_oc.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
 
         m_tc_l.addAction(new NothingCommand(0));
@@ -101,31 +105,26 @@ public class Routines {
         m_tc_r.addAction(new ArmAction(0, true, false, 110));
         m_tc_r.addAction(new OuttakeDriveCommand(1, true, 0.4));
 
-        // lo_oc.addAction(new NothingCommand(7.0));
-        lo_oc.addAction(new NothingCommand(0.0));
-        lo_oc.addAction(new ArmAction(0, true, true, 110));
-        lo_oc.addAction(new DriveCommand(3, false, -150));
-        lo_oc.addAction(new TurnCommand(1.5, false, -90));
-        lo_oc.addAction(new DriveCommand(1.5, false, -23));
-        lo_oc.addAction(new ArmAction(0, true, false, 110));
-        lo_oc.addAction(new OuttakeDriveCommand(1, true, 0.6));
+
 
         // drives 90 inches(just enough to cross baseline)
         // lo_nc.addAction(new NothingCommand(7.0));
 
-        baseline.addAction(new ArmAction(0, true, false, 110));
-        baseline.addAction(new DriveCommand(3, false, -106));
+        baseline.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.2));
+        baseline.addAction(new DriveStraightAction(3, -106));
         //baseline.addAction(new TurnCommand(10, false, 90));
 
-        nothing.addAction(new NothingCommand(0));
+        nothing.addAction(new NothingAction(0));
 
        // tuning.addAction(new ArmAction(1, true, true, 50));
         //tuning.addAction(new ArmAction(1, true, true, 80));
+        /*
         tuning.addAction(new DriveCommand(3, false, -20));
         tuning.addAction(new TurnCommand(2, false, 90));
         tuning.addAction(new ArmAction(0, true, false, 110));
         tuning.addAction(new IntakeDriveCommand(10, false, 200, -1, true));
         tuning.addAction(new NothingCommand(10));
+        */
 
     }
 }

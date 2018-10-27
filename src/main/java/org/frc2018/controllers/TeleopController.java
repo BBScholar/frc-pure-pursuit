@@ -34,10 +34,10 @@ public class TeleopController extends Controller {
 
         Arm.getInstance().setArm(arm);
 
-        if(codriver.getBumper(Hand.kLeft)) Arm.getInstance().intake();
-        else if(codriver.getBumper(Hand.kRight)) Arm.getInstance().spit();
-        else if(codriver.getTriggerAxis(Hand.kLeft) > Constants.XBOX_DEADBAND) Arm.getInstance().hold();
-        else if(codriver.getTriggerAxis(Hand.kRight) > Constants.XBOX_DEADBAND) Arm.getInstance().drop();
+        if(codriver.getBumper(Hand.kRight)) Arm.getInstance().intake();
+        else if(codriver.getBumper(Hand.kLeft)) Arm.getInstance().spit();
+        else if(codriver.getTriggerAxis(Hand.kRight) > Constants.XBOX_DEADBAND) Arm.getInstance().hold();
+        else if(codriver.getTriggerAxis(Hand.kLeft) > Constants.XBOX_DEADBAND) Arm.getInstance().drop();
         else Arm.getInstance().stopIntake();
     }
 

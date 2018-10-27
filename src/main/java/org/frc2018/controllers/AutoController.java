@@ -36,18 +36,13 @@ public class AutoController extends Controller {
 
     public enum AutoMode {
         LEFT,
-        CENTER,
+        ONE_CENTER,
+        TWO_CENTER,
         RIGHT,
         BASELINE
     }
 
-    public enum CubeMode {
-        ONE,
-        TWO
-    }
-
     private AutoMode m_mode;
-    private CubeMode m_cube_mode;
 
     private AutoController() {
         left_one_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
@@ -108,15 +103,18 @@ public class AutoController extends Controller {
         left_outer_one_cube.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
         is_finished = false;
-        m_mode = AutoMode.CENTER;
-        m_cube_mode = CubeMode.ONE;
+        m_mode = AutoMode.ONE_CENTER;
         System.out.println("AUTO MODE: Selected Center Auto!");
         System.out.println("CUBE MODE: One Cube!");
     }
 
     public void rotateAuto() {
         switch(m_mode) {
-            case CENTER:
+            case TWO_CENTER:
+                m_mode = AutoMode.ONE_CENTER;
+                System.out.println("AUTO MODE: Selected One Cube Center Auto!");
+                break;
+            case ONE_CENTER:
                 m_mode = AutoMode.RIGHT;
                 System.out.println("AUTO MODE: Selected Right Auto!");
                 break;
@@ -129,25 +127,12 @@ public class AutoController extends Controller {
                 System.out.println("AUTO MODE: Selected Baseline Auto!");
                 break;
             case BASELINE:
-                m_mode = AutoMode.CENTER;
-                System.out.println("AUTO MODE: Selected Center Auto!"); 
+                m_mode = AutoMode.TWO_CENTER;
+                System.out.println("AUTO MODE: Selected Two Cube Center Auto!"); 
                 break;
             default:
                 m_mode = AutoMode.BASELINE;
                 System.out.println("AUTO MODE: Enum Not Recognised. Baseline Selected!");
-                break;
-        }
-    }
-
-    public void rotateCube() {
-        switch(m_cube_mode) {
-            case ONE:
-                System.out.println("CUBE MODE: Two Cube!");
-                m_cube_mode = CubeMode.TWO;
-                break;
-            case TWO:
-                System.out.println("CUBE MODE: One Cube!");
-                m_cube_mode = CubeMode.ONE;
                 break;
         }
     }
@@ -157,20 +142,18 @@ public class AutoController extends Controller {
         Drivetrain.getInstance().reset();
         boolean is_left = DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L");
         switch(m_mode) {
-            case CENTER:
+            case ONE_CENTER:
                 if(is_left) {
-                    if(m_cube_mode == CubeMode.ONE) {
-                        current_routine = left_one_cube;
-                    } else {
-                        current_routine = left_two_cube;
-                    }
-
+                    current_routine = left_one_cube;
                 } else {
-                    if(m_cube_mode == CubeMode.ONE) {
-                        current_routine = right_one_cube;
-                    } else {
-                        current_routine = right_two_cube;
-                    }
+                    current_routine = right_one_cube;
+                }
+                break;
+            case TWO_CENTER:
+                if(is_left) {
+                    current_routine = left_two_cube;
+                } else {
+                    current_routine = right_two_cube;
                 }
                 break;
             case LEFT:

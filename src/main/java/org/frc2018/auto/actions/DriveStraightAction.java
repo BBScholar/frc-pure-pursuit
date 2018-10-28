@@ -15,6 +15,7 @@ public class DriveStraightAction extends Action {
 
     @Override
     public void start() {
+        super.reset();
         super.start();
         Drivetrain.getInstance().setPosition(m_target_inches);
     }
@@ -31,7 +32,7 @@ public class DriveStraightAction extends Action {
 
     @Override
     public boolean next() {
-        if(super.timedOut() || Math.abs(Drivetrain.getInstance().getPositionError()) < 2.0) {
+        if(super.timedOut() || Math.abs(Drivetrain.getInstance().getPositionError()) < 1.0) {
             return true;
         }
         return false;

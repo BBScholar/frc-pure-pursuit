@@ -15,6 +15,7 @@ public class Action {
     }
 
     public void start() {
+        reset();
         _timeout.reset();
         _timeout.start();
     }

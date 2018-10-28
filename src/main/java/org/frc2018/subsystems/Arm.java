@@ -59,6 +59,11 @@ public class Arm extends Subsystem {
         m_right_intake.set(ControlMode.PercentOutput, 0);
     }
 
+    public void setIntake(double speed) {
+        m_left_intake.set(ControlMode.PercentOutput, speed);
+        m_right_intake.set(ControlMode.PercentOutput, speed);
+    }
+
     public void setArm(double speed) { // positive is up
         speed = (Math.abs(speed) > Constants.MAX_ARM_SPEED) ? Math.signum(speed) * Constants.MAX_ARM_SPEED : speed;
         m_arm.set(ControlMode.PercentOutput, speed);

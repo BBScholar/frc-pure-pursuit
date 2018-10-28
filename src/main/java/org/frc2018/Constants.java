@@ -57,9 +57,9 @@ public class Constants { // temp, in place of dashboard
     public static final double      VEL_MAX_OUTPUT              = 1.0;
 
 
-    public static final double      POS_kP                      = 1.0;
+    public static final double      POS_kP                      = 0.7;
     public static final double      POS_kI                      = 0.0;
-    public static final double      POS_kD                      = 0.6;
+    public static final double      POS_kD                      = 0.3;
     public static final double      POS_kF                      = 0.0;
     public static final int         POS_IZONE                   = 10;
     public static final double      POS_MAX_OUTPUT              = 0.5;

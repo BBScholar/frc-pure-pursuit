@@ -6,6 +6,7 @@ import org.frc2018.auto.actions.Action;
 import org.frc2018.auto.actions.ArmAction;
 import org.frc2018.auto.actions.DrivePathAction;
 import org.frc2018.auto.actions.DriveStraightAction;
+import org.frc2018.auto.actions.IntakeAction;
 import org.frc2018.auto.actions.NothingAction;
 import org.frc2018.auto.actions.ParallelAction;
 import org.frc2018.auto.actions.TurnAction;
@@ -86,7 +87,7 @@ public class AutoController extends Controller {
 
 
         baseline.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.2));
-        baseline.addAction(new DriveStraightAction(3, -106));
+        baseline.addAction(new DriveStraightAction(3, -120));
 
         right_outer_one_cube.addAction(new NothingAction(0.0));
         right_outer_one_cube.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.4));
@@ -96,10 +97,14 @@ public class AutoController extends Controller {
         right_outer_one_cube.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
         left_outer_one_cube.addAction(new NothingAction(0.0));
-        left_outer_one_cube.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.4));
-        left_outer_one_cube.addAction(new DriveStraightAction(3, -150));
+        left_outer_one_cube.addAction(new IntakeAction(0.0, -0.2));
+        //left_outer_one_cube.addAction(new ArmAction(ArmDirection.UP, IntakeDirection.HOLD, 0.4));
+        left_outer_one_cube.addAction(new DriveStraightAction(5, -150));
+        left_outer_one_cube.addAction(new NothingAction(1));
         left_outer_one_cube.addAction(new TurnAction(1.5, -90));
+        left_outer_one_cube.addAction(new NothingAction(1));
         left_outer_one_cube.addAction(new DriveStraightAction(1.5, -35));
+        left_outer_one_cube.addAction(new NothingAction(1));
         left_outer_one_cube.addAction(new ArmAction(ArmDirection.NONE, IntakeDirection.DROP, 0.4));
 
         is_finished = false;

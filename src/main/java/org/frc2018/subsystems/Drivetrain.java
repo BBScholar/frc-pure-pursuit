@@ -314,6 +314,14 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
+     * @param offset the offset in degrees to apply to the gyro
+     * @return
+     */
+    public void setAngleOffset(double offset) {
+        m_gyro.addYaw(offset, 0);
+    }
+
+    /**
      * 
      * @return robot angle in degrees
      */

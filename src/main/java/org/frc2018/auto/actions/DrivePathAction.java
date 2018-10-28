@@ -25,7 +25,6 @@ public class DrivePathAction extends Action {
         init_angle = Drivetrain.getInstance().getGyroAngle();
         Drivetrain.getInstance().setBrakeMode(true);
         System.out.println(m_path);
-        Drivetrain.getInstance().setVelocity(10, 10);
     }
 
     @Override

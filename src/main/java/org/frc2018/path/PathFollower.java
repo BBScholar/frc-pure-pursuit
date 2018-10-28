@@ -20,6 +20,7 @@ public class PathFollower {
 
     private Vector2 calculateLookahead(Vector2 robot_pos, double robot_angle) {
         m_last_closest_point_index = m_path.findClosestPointIndex(robot_pos, m_last_closest_point_index);
+        System.out.println(m_last_closest_point_index);
         Vector2 lookahead = null;
         for(int i = m_last_closest_point_index; i < m_path.getPathLength() - 1; i++) {
             Vector2 begin = m_path.getPoint(i);
@@ -96,6 +97,8 @@ public class PathFollower {
 
         output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+
+        System.out.println("Distance to zero point: " + robot_pos.getMagnitude() + " distance to one point: " + Vector2.distanceBetween(robot_pos, m_path.getPoint(1)));
 
         return output;
     }

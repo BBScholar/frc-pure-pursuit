@@ -54,8 +54,8 @@ public class AutoController extends Controller {
         left_two_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/center_to_left.csv", true), 10));
         left_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.3));
         left_two_cube.addAction(new ArmAction(ArmDirection.HOLD_DOWN, IntakeDirection.NONE, 0.7));
-        left_two_cube.addAction(new DrivePathAction(new Path("home/lvuser/paths/left_to_pyramid.csv", false) , 10));
-        left_two_cube.addAction(new DrivePathAction(new Path("home/lvuser/paths/pyramid_to_left.csv", true), 10));
+        left_two_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/left_to_pyramid.csv", false) , 10));
+        left_two_cube.addAction(new DrivePathAction(new Path("/home/lvuser/paths/pyramid_to_left.csv", true), 10));
         /*
         left_two_cube.addAction(new ParallelAction(5, Arrays.asList(
             new DrivePathAction(new Path("home/lvuser/paths/left_to_pyramid.csv", false) , 5),
@@ -75,12 +75,12 @@ public class AutoController extends Controller {
         right_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
         right_two_cube.addAction(new ArmAction(ArmDirection.DOWN, IntakeDirection.NONE, 0.5));
         right_two_cube.addAction(new ParallelAction(5, Arrays.asList(
-            new DrivePathAction(new Path("home/lvuser/paths/right_to_pyramind.csv", false) , 5),
+            new DrivePathAction(new Path("/home/lvuser/paths/right_to_pyramind.csv", false) , 5),
             new ArmAction(ArmDirection.NONE, IntakeDirection.INTAKE, 5)
         ))); // arm down, drive path to pyramid, intake
         right_two_cube.addAction(new ParallelAction(5, Arrays.asList(
             new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.HOLD, 2),
-            new DrivePathAction(new Path("home/lvuser/paths/pyramid_to_right.csv", true), 5)
+            new DrivePathAction(new Path("/home/lvuser/paths/pyramid_to_right.csv", true), 5)
         ))); // arm up, drive back to switch
         right_two_cube.addAction(new ArmAction(ArmDirection.HOLD_UP, IntakeDirection.DROP, 0.5));
 

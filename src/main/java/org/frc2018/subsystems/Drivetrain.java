@@ -314,11 +314,12 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * @param offset the offset in degrees to apply to the gyro
+     * @param angle the offset in degrees to apply to the gyro
      * @return
      */
-    public void setAngleOffset(double offset) {
-        m_gyro.addYaw(offset, 0);
+    public void setAngleOffset(double angle) {
+        m_gyro.addYaw(angle, 0);
+        Position.getInstance().setAngleOffset(angle);
     }
 
     /**
@@ -647,6 +648,10 @@ class Position {
 
     public Vector2 getPositionVector() {
         return new Vector2(x, y);
+    }
+
+    public void setAngleOffset(double angle) {
+        last_angle += angle;
     }
 
     public void reset() {

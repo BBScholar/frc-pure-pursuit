@@ -88,11 +88,11 @@ public class PathFollower {
         int second_point_index = m_path.findNextClosestPointIndex(robot_pos, m_last_closest_point_index);
         double closest_point_distance = Vector2.distanceBetween(m_path.getPoint(m_last_closest_point_index), robot_pos);
         double second_closest_point_distance = Vector2.distanceBetween(m_path.getPoint(second_point_index), robot_pos);
-        Vector2 distance_vector = new Vector2(closest_point_distance, second_closest_point_distance);
-        distance_vector = Vector2.unitDirectionVector(distance_vector);
+        double total_distance = closest_point_distance + second_closest_point_distance;
 
-        Vector2 velocity_vector = new Vector2(m_path.getPointVelocity(m_last_closest_point_index), m_path.getPointVelocity(second_point_index));
-        return Vector2.dot(distance_vector, velocity_vector);
+        double closest_velocity = m_path.getPointVelocity(m_last_closest_point_index);
+        double second_closest_velocity = m_path.getPointVelocity(second_point_index);
+        return (closest_velocity * closest_point_distance / total_distance) + (second_closest_velocity * second_closest_point_distance / total_distance);
     }
 
     public double[] update(Vector2 robot_pos, double robot_angle) {

@@ -84,11 +84,15 @@ public class PathFollower {
         return curvature * side;
     }
 
-    public double getTargetVelocity(Vector2 robot_pos) {
-        int second_point_index = m_path.findNextClosestPointIndex(point, closest_index)
-        m_path.getPoint(m_last_closest_point_index);
-        m_path.getPointVelocity(m_last_closest_point_index);
-        m_path.
+    private double getTargetVelocity(Vector2 robot_pos) {
+        int second_point_index = m_path.findNextClosestPointIndex(robot_pos, m_last_closest_point_index);
+        double closest_point_distance = Vector2.distanceBetween(m_path.getPoint(m_last_closest_point_index), robot_pos);
+        double second_closest_point_distance = Vector2.distanceBetween(m_path.getPoint(second_point_index), robot_pos);
+        Vector2 distance_vector = new Vector2(closest_point_distance, second_closest_point_distance);
+        distance_vector = Vector2.unitDirectionVector(distance_vector);
+
+        Vector2 velocity_vector = new Vector2(m_path.getPointVelocity(m_last_closest_point_index), m_path.getPointVelocity(second_point_index));
+        return Vector2.dot(distance_vector, velocity_vector);
     }
 
     public double[] update(Vector2 robot_pos, double robot_angle) {
@@ -96,9 +100,10 @@ public class PathFollower {
         robot_angle = Math.toRadians(robot_angle);
         Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
+        double target_velocity = getTargetVelocity(robot_pos);
 
-        output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
-        output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        output[0] = target_velocity * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        output[1] = target_velocity * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
 
         return output;
     }

@@ -59,15 +59,11 @@ public class PathFollower {
             if (distance_between_robot_end < Constants.LOOK_AHEAD_DISTANCE) {
                 lookahead = m_path.getPoint(m_path.getPathLength() - 1);
             }
-
-            Vector2 robot_to_lookahead = Vector2.subtract(lookahead, robot_pos);
-            Vector2 robot_direction = Vector2.representHeadingWithUnitVector(-Math.toDegrees(robot_angle) + 90);
-            double angle_to_lookahead = Math.abs(Vector2.angleBetween(robot_to_lookahead, robot_direction));
         }
         return lookahead;
     }
 
-    private double calculateCurvature(Vector2 robot_pos, Vector2 look_ahead, double robot_angle) {
+    private double calculateCurvature(Vector2 robot_pos, Vector2 look_ahead, double robot_angle, double angle_to_lookahead) {
         double a = (1 / Math.tan(robot_angle));
         double b = -1;
         double c = -(1 / Math.tan(robot_angle)) * robot_pos.y + robot_pos.x;
@@ -76,18 +72,27 @@ public class PathFollower {
         double curvature = (2.0 * x) / (Math.pow(Constants.LOOK_AHEAD_DISTANCE, 2));
 
         double side = Math.signum(Math.sin(robot_angle) * (look_ahead.x - robot_pos.x) - Math.cos(robot_angle) * (look_ahead.y - robot_pos.y));
-        return curvature * side;
+
+        return (angle_to_lookahead <= 90.0) ? curvature * side : -curvature * side;
     }
 
     public double[] update(Vector2 robot_pos, double robot_angle) {
         double[] output = new double[2];
         robot_angle = Math.toRadians(robot_angle);
         if(robot_angle == 0) robot_angle = Constants.EPSILON;
-        Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
-        double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
 
-        output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
-        output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
+
+        Vector2 robot_to_lookahead = Vector2.subtract(lookahead, robot_pos);
+        Vector2 robot_direction = Vector2.representHeadingWithUnitVector(-Math.toDegrees(robot_angle) + 90);
+        double angle_to_lookahead = Math.abs(Vector2.angleBetween(robot_to_lookahead, robot_direction));
+
+        double curvature = calculateCurvature(robot_pos, lookahead, robot_angle, angle_to_lookahead);
+
+        double average_velocity = (angle_to_lookahead <= 90.0) ? m_path.getPointVelocity(m_last_closest_point_index) : -m_path.getPointVelocity(m_last_closest_point_index);
+
+        output[0] = average_velocity * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
+        output[1] = average_velocity * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
 
         return output;
     }

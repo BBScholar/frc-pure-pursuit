@@ -9,6 +9,7 @@ import com.opencsv.CSVReader;
 
 import org.frc2018.Constants;
 import org.frc2018.Vector2;
+import org.glassfish.grizzly.compression.lzma.impl.Base;
 
 public class Path {
 
@@ -37,8 +38,8 @@ public class Path {
             }
             reader.close();
 
-            coordinates = new Vector2[temp_coords.size()];
-            target_velocities = new double[temp_velo.size()];
+            coordinates = new Vector2[temp_coords.size() + 1];
+            target_velocities = new double[temp_velo.size() + 1];
 
             for(int i = 0; i < temp_coords.size(); i++) {
                 coordinates[i] = temp_coords.get(i);
@@ -46,12 +47,14 @@ public class Path {
             }
         } catch(Exception e) {
             e.printStackTrace();
+            System.exit(1);
         }
 
         // extend the last line segment by the lookahead distance
-        Vector2 last_segment_unit_direction = Vector2.unitDirectionVector(Vector2.subtract(coordinates[coordinates.length - 1], coordinates[coordinates.length - 2]));
-        System.out.println(last_segment_unit_direction);
-        coordinates[coordinates.length - 1] = Vector2.add(coordinates[coordinates.length - 1], Vector2.multiply(last_segment_unit_direction, Constants.LOOK_AHEAD_DISTANCE));
+        Vector2 last_segment_unit_direction = Vector2.unitDirectionVector(Vector2.subtract(coordinates[coordinates.length - 2], coordinates[coordinates.length - 3]));
+        coordinates[coordinates.length - 1] = Vector2.add(coordinates[coordinates.length - 2], Vector2.multiply(last_segment_unit_direction, Constants.LOOK_AHEAD_DISTANCE));
+        double point_distance = Vector2.distanceBetween(coordinates[coordinates.length - 3], coordinates[coordinates.length - 2]);
+        target_velocities[target_velocities.length - 2] = target_velocities[target_velocities.length - 3] * point_distance / (point_distance + Constants.LOOK_AHEAD_DISTANCE);
     }
 
     public Vector2 getPoint(int index) {
@@ -59,6 +62,10 @@ public class Path {
             throw new IndexOutOfBoundsException();
         }
         return Vector2.copyVector(coordinates[index]);
+    }
+
+    public boolean isBackwards() {
+        return backwards;
     }
 
     public double getPointVelocity(int index) {

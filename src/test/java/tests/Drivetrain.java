@@ -41,6 +41,15 @@ public class Drivetrain {
         return m_angle;
     }
 
+    public void setRobotAngle(double angle) {
+        m_angle = angle;
+        Position.getInstance().setInitialAngle(angle);
+    }
+
+    public void setRobotPosition(Vector2 position) {
+        Position.getInstance().setPositionVector(position);
+    }
+
     public Vector2 getRobotPosition() {
         return Position.getInstance().getPositionVector();
     }
@@ -80,6 +89,15 @@ class Position {
 
     public Vector2 getPositionVector() {
         return new Vector2(x, y);
+    }
+
+    public void setPositionVector(Vector2 position) {
+        x = position.x;
+        y = position.y;
+    }
+
+    public void setInitialAngle(double angle) {
+        last_angle = angle;
     }
 
     public void reset() {

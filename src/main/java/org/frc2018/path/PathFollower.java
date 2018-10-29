@@ -1,8 +1,5 @@
 package org.frc2018.path;
 
-import java.util.Map;
-import java.util.Optional;
-
 import org.frc2018.Constants;
 import org.frc2018.Vector2;
 import org.frc2018.path.Path;
@@ -20,7 +17,6 @@ public class PathFollower {
 
     private Vector2 calculateLookahead(Vector2 robot_pos, double robot_angle) {
         m_last_closest_point_index = m_path.findClosestPointIndex(robot_pos, m_last_closest_point_index);
-        System.out.println(m_last_closest_point_index);
         Vector2 lookahead = null;
         for(int i = m_last_closest_point_index; i < m_path.getPathLength() - 1; i++) {
             Vector2 begin = m_path.getPoint(i);
@@ -58,7 +54,6 @@ public class PathFollower {
 
         if(lookahead == null) {
             lookahead = m_path.getPoint(m_path.getPathLength() - 1);
-            // System.out.println("Using Last Lookahead: " + lookahead);
         } else {
             double distance_between_robot_end = Vector2.distanceBetween(robot_pos, m_path.getPoint(m_path.getPathLength() - 1));
             if (distance_between_robot_end < Constants.LOOK_AHEAD_DISTANCE) {
@@ -68,7 +63,6 @@ public class PathFollower {
             Vector2 robot_to_lookahead = Vector2.subtract(lookahead, robot_pos);
             Vector2 robot_direction = Vector2.representHeadingWithUnitVector(-Math.toDegrees(robot_angle) + 90);
             double angle_to_lookahead = Math.abs(Vector2.angleBetween(robot_to_lookahead, robot_direction));
-            // System.out.println(angle_to_lookahead);
         }
         return lookahead;
     }
@@ -85,20 +79,15 @@ public class PathFollower {
         return curvature * side;
     }
 
-    // public double getTargetVelocity(Vector2 robot_pos) {
-
-    // }
-
     public double[] update(Vector2 robot_pos, double robot_angle) {
         double[] output = new double[2];
         robot_angle = Math.toRadians(robot_angle);
+        if(robot_angle == 0) robot_angle = Constants.EPSILON;
         Vector2 lookahead = calculateLookahead(robot_pos, robot_angle);
         double curvature = calculateCurvature(robot_pos, lookahead, robot_angle);
 
         output[0] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 + (curvature * Constants.TRACK_WIDTH)) / 2.0;
         output[1] = m_path.getPointVelocity(m_last_closest_point_index) * (2.0 - (curvature * Constants.TRACK_WIDTH)) / 2.0;
-
-        System.out.println("Distance to zero point: " + robot_pos.getMagnitude() + " distance to one point: " + Vector2.distanceBetween(robot_pos, m_path.getPoint(1)));
 
         return output;
     }

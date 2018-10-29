@@ -85,8 +85,8 @@ public class Path {
     @Override
     public String toString() {
         String tmp = "";
-        for(Vector2 i : coordinates) {
-            tmp += i.toString() + "\n";
+        for(int i = 0; i < coordinates.length; i++) {
+            tmp += coordinates[i].toString() + " - " + target_velocities[i] + "\n";
         }
         return tmp;
     }

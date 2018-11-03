@@ -69,6 +69,7 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void update() {
+        System.out.println("Angle: " + getGyroAngle());
         Position.getInstance().update(getLeftDistanceInches(), getRightDistanceInches(), getGyroAngle());
     }
 
@@ -317,8 +318,8 @@ public class Drivetrain extends Subsystem {
      * @param angle the offset in degrees to apply to the gyro
      * @return
      */
-    public void setAngleOffset(double angle) {
-        m_gyro.addYaw(angle, 0);
+    public void setInitialAngle(double angle) {
+        m_gyro.setYaw(angle * 8192 / 360.0, 0);
         Position.getInstance().setAngleOffset(angle);
     }
 

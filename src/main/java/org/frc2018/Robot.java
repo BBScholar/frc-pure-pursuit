@@ -4,13 +4,20 @@ import edu.wpi.first.wpilibj.TimedRobot;
 
 import org.frc2018.controllers.AutoController;
 import org.frc2018.controllers.TeleopController;
+import org.frc2018.path.Path;
+import org.frc2018.path.PathFollower;
 import org.frc2018.subsystems.Arm;
 import org.frc2018.subsystems.Drivetrain;
 
 public class Robot extends TimedRobot {
 
+    private Path first;
+    private PathFollower first_follower;
+
     public Robot() {
         super.setPeriod(Constants.UPDATE_PERIOD);
+        first = new Path("/home/lvuser/paths/center_to_left.csv", true);
+        first_follower = new PathFollower(first);
     }
 
     @Override
@@ -70,11 +77,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-       
+        Drivetrain.getInstance().setInitialAngle(180.0);
+        Drivetrain.getInstance().setVelocity(0, 0);
     }
 
     @Override
     public void testPeriodic() {
+        //System.out.println(Drivetrain.getInstance().getGyroAngle());
+        //double[] velocity = first_follower.update(Drivetrain.getInstance().getRobotPosition(), Drivetrain.getInstance().getGyroAngle());
+        //Drivetrain.getInstance().setVelocity(velocity[0], velocity[1]);
     }
 
 }

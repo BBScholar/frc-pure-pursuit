@@ -140,7 +140,6 @@ public class AutoController extends Controller {
     @Override
     public void init() {
         Drivetrain.getInstance().reset();
-        Drivetrain.getInstance().setAngleOffset(180.0);
         boolean is_left = DriverStation.getInstance().getGameSpecificMessage().substring(0, 1).equals("L");
         switch(m_mode) {
             case ONE_CENTER:
